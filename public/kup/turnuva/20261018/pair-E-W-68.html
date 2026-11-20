@@ -1,0 +1,104 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Tan ÇİMEN - Şenol SÜNGET Özeti</title><style>
+        body { background:#f8fafc; color:#0f172a; font-family:sans-serif; padding:10px; margin:0; } 
+        .club-header { text-align:center; margin-bottom:15px; background:linear-gradient(135deg, #1e293b, #0f172a); color:white; padding:15px; border-radius:10px; }
+        .club-header h2 { margin:0; font-size:22px; color:#38bdf8; } .club-header p { margin:5px 0 0 0; font-size:13px; opacity:0.8; font-weight:bold; }
+        .summary-card { max-width:600px; margin:15px auto; background:white; padding:15px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.05); text-align:center; }
+        .p-avatar { width:65px; height:65px; background:#e2e8f0; border-radius:50%; margin:5px auto; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:32px; }
+        .p-names { font-size:16px; font-weight:bold; color:#0f172a; margin:10px 0; }
+        .p-photos { display:flex; justify-content:center; gap:24px; margin:10px 0; }
+        .p-photo-item { display:flex; flex-direction:column; align-items:center; gap:6px; width:90px; }
+        .p-photo-circle { position:relative; width:72px; height:72px; }
+        .p-photo-circle .p-avatar-fallback { position:absolute; inset:0; border-radius:50%; background:#e2e8f0; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:32px; }
+        .p-photo-circle img { position:absolute; inset:0; width:72px; height:72px; border-radius:50%; object-fit:cover; border:2px solid #e2e8f0; background:white; }
+        .p-photo-name { font-size:11px; font-weight:bold; color:#0f172a; white-space:nowrap; max-width:100px; overflow:hidden; text-overflow:ellipsis; }
+        .p-stats { font-size:13px; font-weight:bold; color:#b91c1c; margin-bottom:5px; }
+        .button-bar { display:flex; gap:4px; max-width:600px; margin:15px auto; justify-content:space-between; }
+        .btn { color:white; text-decoration:none; padding:10px; border-radius:6px; font-weight:bold; font-size:12px; text-align:center; flex:1; background:#0f8b61; }
+        .btn-active { background:#042f1a !important; border:1px solid #38bdf8; }
+        .match-table { max-width:900px; width:100%; border-collapse:collapse; font-size:12px; font-weight:600; text-align:center; margin:15px auto; background:white; border-radius:8px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.03); }
+        .match-table th { background:#334155; color:white; padding:10px 4px; border:1px solid #cbd5e1; }
+        .match-table td { padding:10px 4px; border:1px solid #e2e8f0; }
+        .tr-link { cursor:pointer; } .tr-link:hover { background:#f1f5f9; }
+        .badge { padding:3px 6px; border-radius:4px; color:#0f172a; font-weight:bold; font-size:11px; background:#ffffff; }
+        .badge-ns { border:none !important; } .badge-ew { border:none !important; }
+        .tip-wrap { cursor:help; border-bottom:1px dotted currentColor; }
+        @media (max-width:768px) { .tip-wrap { cursor:default !important; border-bottom:none !important; } }
+        #global-tooltip { display:none; position:fixed; z-index:1000; max-width:330px;
+            background:#042f1a; color:white; border-radius:8px; padding:10px 12px;
+            box-shadow:0 6px 18px rgba(0,0,0,0.35); font-size:11px; line-height:1.6; pointer-events:none; }
+        .board-tip { width:auto; max-width:340px; font-size:11px; line-height:1.5; white-space:normal; }
+        .board-tip-baslik { font-weight:bold; color:#38bdf8; margin-bottom:6px; font-size:12px; }
+        .bt-grid { display:flex; flex-direction:column; align-items:center; gap:5px; }
+        .bt-ns-row { display:flex; justify-content:center; }
+        .bt-ew-row { display:flex; align-items:center; justify-content:center; }
+        .bt-card { background:#ffffff; color:#0f172a; border-radius:5px; padding:5px 8px; font-size:10.5px; line-height:1.5; flex:0 0 auto; white-space:nowrap; }
+        .bt-suit { white-space:nowrap; }
+        .bt-spade { color:#0000CD; font-weight:bold; } .bt-heart { color:#FF0000; font-weight:bold; }
+        .bt-diamond { color:#FE7210; font-weight:bold; } .bt-club { color:#0f8b61; font-weight:bold; }
+        .bt-zb { position:absolute; font-size:10px; font-weight:bold; }
+        .board-tip-optimum { margin-top:8px; padding-top:6px; border-top:1px solid rgba(255,255,255,0.15); font-weight:bold; }
+        .kontrat-td, .atak-td { font-size:11px; }
+        .kontrat-td span, .atak-td span { font-size:0.7em; }
+        @media (min-width:641px) { .kontrat-td span, .atak-td span { font-size:11px; } }
+        .bord-th, .bord-td { width:2ch; max-width:2ch; padding-left:2px; padding-right:2px; }
+        .rakip-tire { display:inline; }
+        @media (max-width:640px) { .rakip-tire { display:none; } }
+    </style></head><body>
+    <script>localStorage.setItem('last_bridge_pair', window.location.href);</script>
+    <div class="club-header"><h2>KUP BRİÇ SPOR KULÜBÜ</h2><p>18 Ekim 2026 Pazar 14:30</p></div>
+    <div class="summary-card">
+    <div class="p-photos"><div class="p-photo-item"><div class="p-photo-circle"><div class="p-avatar-fallback">👤</div><img src="https://brickulubu.com/players/350395.jpg" alt="Tan ÇİMEN" onerror="this.style.display='none';"></div><div class="p-photo-name">Tan ÇİMEN</div></div><div class="p-photo-item"><div class="p-photo-circle"><div class="p-avatar-fallback">👤</div><img src="https://brickulubu.com/players/340550.jpg" alt="Şenol SÜNGET" onerror="this.style.display='none';"></div><div class="p-photo-name">Şenol SÜNGET</div></div></div>
+    <div class="p-stats">Sıra: 17 &nbsp;&nbsp; Genel Puan: %47.08</div></div>
+    <div class="button-bar">
+        <a href="#" id="btn-sort-board" class="btn" onclick="siralaGoster('board'); return false;">Bord'a göre sırala</a>
+        <a href="#" id="btn-sort-round" class="btn" style="display:none;" onclick="siralaGoster('round'); return false;">Tur'a göre sırala</a>
+        <a href="index.html" class="btn btn-active">TURNUVA</a>
+        <a href="../../takvim.html" class="btn">Takvim</a>
+    </div>
+    <div id="view-board" style="display:none;"><table class="match-table"><thead><tr><th>Tur<br>Yön</th><th class="bord-th">B</th><th style="text-align:left;">Kontrat</th><th>Atak</th><th>+-</th><th>Skor<br>KG</th><th>Bord<br>%</th><th>Canlı<br>%</th><th>Rakip<br>%</th></tr></thead><tbody></tbody></table></div>
+    <div id="view-round" style="display:block;"><table class="match-table"><thead><tr><th>Tur<br>Yön</th><th class="bord-th">B</th><th style="text-align:left;">Kontrat</th><th>Atak</th><th>+-</th><th>Skor<br>KG</th><th>Bord<br>%</th><th>Canlı<br>%</th><th>Rakip<br>%</th></tr></thead><tbody></tbody></table></div>
+    <script>
+    function siralaGoster(mod) {
+        document.getElementById('view-board').style.display = (mod === 'board') ? 'block' : 'none';
+        document.getElementById('view-round').style.display = (mod === 'round') ? 'block' : 'none';
+        document.getElementById('btn-sort-board').style.display = (mod === 'board') ? 'none' : '';
+        document.getElementById('btn-sort-round').style.display = (mod === 'round') ? 'none' : '';
+    }
+    </script>
+    <div class="site-footer" style="text-align:center; margin-top:25px; padding:14px;
+    background:linear-gradient(135deg, #1e293b, #0f172a); color:rgba(255,255,255,0.85);
+    font-size:12px; border-radius:8px;">© 2026 Kup Bri̇ç Spor Kulübü | Tüm Hakları Saklıdır</div>
+    <div id="global-tooltip"></div>
+<script>
+(function(){
+    var tip = document.getElementById('global-tooltip');
+    if (!tip) return;
+    function konumla(el){
+        tip.style.left = '0px'; tip.style.top = '0px'; tip.style.display = 'block';
+        var r = el.getBoundingClientRect();
+        var tr = tip.getBoundingClientRect();
+        var left = r.left + r.width/2 - tr.width/2;
+        var top = r.bottom + 6;
+        if (top + tr.height > window.innerHeight) top = r.top - tr.height - 6;
+        if (top < 4) top = 4;
+        if (top + tr.height > window.innerHeight - 4) top = Math.max(4, window.innerHeight - tr.height - 4);
+        if (left < 4) left = 4;
+        if (left + tr.width > window.innerWidth - 4) left = window.innerWidth - tr.width - 4;
+        tip.style.left = left + 'px';
+        tip.style.top = top + 'px';
+    }
+    function bagla(el){
+        el.addEventListener('mouseenter', function(){
+            if (window.innerWidth <= 768) return;
+            var t = el.getAttribute('data-tip');
+            if (!t) return;
+            tip.innerHTML = t;
+            konumla(el);
+        });
+        el.addEventListener('mouseleave', function(){ tip.style.display = 'none'; });
+    }
+    document.querySelectorAll('.tip-wrap[data-tip]').forEach(bagla);
+    window._baglaTip = bagla;
+})();
+</script>
+    </body></html>

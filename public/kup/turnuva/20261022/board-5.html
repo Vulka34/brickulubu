@@ -1,0 +1,373 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Bord 5 Analizi</title><style>
+        body { background:#f8fafc; color:#0f172a; font-family:sans-serif; padding:10px; margin:0; } 
+        .club-header { text-align:center; margin-bottom:15px; background:linear-gradient(135deg, #1e293b, #0f172a); color:white; padding:15px; border-radius:10px; }
+        .club-header h2 { margin:0; font-size:22px; color:#38bdf8; } .club-header p { margin:5px 0 0 0; font-size:13px; opacity:0.8; font-weight:bold; }
+        .wrapper-layout { max-width:1150px; margin:auto; display:flex; flex-direction:column; }
+        .main-container { display:flex; flex-direction: row; gap:10px; width:100%; align-items: flex-start; } 
+        .left-panel-wrapper { flex:1.1; display:flex; flex-direction:column; min-width:0; }
+        .left-table-panel { width:100%; overflow-x:auto; }
+        .match-table { width:100%; border-collapse:collapse; font-size:12px; font-weight:600; text-align:center; table-layout:fixed; background:white; border-radius:8px; overflow:hidden; }
+        .match-table th { background:#064e3b; color:white; padding:6px 2px; border:1px solid #cbd5e1; box-sizing:border-box; }
+        .match-table td { padding:8px 4px; border:1px solid #e2e8f0; }
+        .selected-pair-row td { background:#ecfdf5 !important; }
+        .th-double { background:#042f1a !important; font-size:10px !important; padding:4px !important; }
+        .pct-9 { width: 9%; } .pct-19 { width: 19%; } .pct-29 { width: 29%; }
+        .pct-10 { width: 10%; } .pct-15 { width: 15%; } .pct-25 { width: 25%; } .pct-30 { width: 30%; }
+        .tip-wrap { cursor:help; border-bottom:1px dotted currentColor; }
+        @media (max-width:768px) { .tip-wrap { cursor:default !important; border-bottom:none !important; } }
+        #global-tooltip { display:none; position:fixed; z-index:1000; max-width:320px;
+            background:#042f1a; color:white; border-radius:8px; padding:10px 12px;
+            box-shadow:0 6px 18px rgba(0,0,0,0.35); font-size:12px; line-height:1.6; pointer-events:none; }
+        .right-hand-panel { flex:0 1 400px; max-width:400px; background:#006633; padding:12px; border-radius:8px; display:grid; grid-template-columns:minmax(0,0.8fr) minmax(76px,1fr) minmax(0,0.8fr); gap:8px; align-items:center; color:white; box-sizing:border-box; } 
+        .card-panel { background:white; color:#0f172a; border:1px solid #e2e8f0; padding:7px; border-radius:6px; min-height:0; font-size:13px; box-sizing:border-box; } 
+        .p-name { color:#2563eb; font-weight:bold; font-size:12px; margin-bottom:2px; text-transform:uppercase; display:block; overflow-wrap:anywhere; }
+        .spade { color:#0000CD; } .heart { color:#FF0000; } .diamond { color:#FE7210; } .club { color:#0f8b61; } .suit { margin-bottom:2px; color:#000; font-weight:bold; } .suit-symbol { display:inline-block; width:1em; font-weight:bold; } .suit-cards { display:inline-block; color:#000; font-size:15px; font-weight:bold; vertical-align:top; } .suit-cards-compact { width:auto; white-space:nowrap; } .suit-cards-wrap { width:8ch; max-width:100%; white-space:normal; overflow-wrap:anywhere; } 
+        .matrix { display:flex; align-items:center; justify-content:center; position:relative; width:88px; height:96px; margin:auto; background:#cbd5e1; border-radius:4px; } 
+        .z-b { position:absolute; font-weight:bold; font-size:12px; display:flex; align-items:center; justify-content:center; color:#0f172a; } 
+        .z-n { top:0; left:0; width:100%; height:22px; background:#FF0000; clip-path:polygon(0 0,100% 0,85% 100%,15% 100%); } 
+        .z-s { bottom:0; left:0; width:100%; height:22px; background:#FF0000; clip-path:polygon(15% 0,85% 0,100% 100%,0 100%); } 
+        .z-w { top:0; left:0; width:22px; height:100%; background:#00cc66; clip-path:polygon(0 0,100% 15%,100% 85%,0 100%); } 
+        .z-e { top:0; right:0; width:22px; height:100%; background:#00cc66; clip-path:polygon(0 15%,100% 0,100% 100%,0 85%); } .b-num { font-size:24px; font-weight:bold; color:#0f172a; z-index:5; }
+        .hcp { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; width:90px; margin:auto; text-align:center; color:#0f172a; } .hcp-c { border:1px solid #cbd5e1; background:white; padding:2px; font-size:10px; font-weight:bold; } 
+        .dd-container { justify-self:center; width:96px; max-width:100%; box-sizing:border-box; background:white; border-radius:4px; padding:0; border:1px solid #cbd5e1; overflow:hidden; }
+        .dd { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:0; width:100%; text-align:center; color:#0f172a; } .dd-c { border-right:1px solid #cbd5e1; border-bottom:1px solid #cbd5e1; background:white; padding:1px 0; font-size:9px; }
+        .button-bar { grid-column: span 3; display:flex; flex-direction:row; gap:4px; justify-content:space-between; align-items:center; padding:6px; background:rgba(255,255,255,0.05); border-radius:8px; width:100%; box-sizing:border-box; margin-top:10px; border:1px solid rgba(255,255,255,0.1); }
+        .btn { color:white; text-decoration:none; padding:8px 4px; border-radius:6px; font-weight:bold; font-size:11px; border:1px solid rgba(255,255,255,0.15); text-align:center; flex:1; min-width:0; white-space:nowrap; box-sizing:border-box; background:#064e3b; }
+        .btn:hover { background:#042f1a; }
+        .btn-select { background:#064e3b; color:white; border:1px solid rgba(255,255,255,0.2); padding:8px 2px; font-size:11px; font-weight:bold; border-radius:6px; flex:1; min-width:0; box-sizing:border-box; text-align:center; }
+        .nav-footer { text-align:center; margin-top:20px; padding-top:15px; border-top:1px solid #e2e8f0; font-size:14px; }
+        @media (max-width: 768px) { 
+            .main-container { flex-direction: column !important; gap: 15px !important; } 
+            .right-hand-panel { width: 100% !important; max-width:400px; order: 1 !important; padding:8px !important; gap:5px !important; } 
+            .left-panel-wrapper { width: 100% !important; order: 2 !important; flex: none; }
+            .card-panel { padding:5px !important; min-height:64px !important; font-size:12px !important; }
+        }
+    </style></head><body>
+    <div class="club-header"><h2>KUP BRİÇ SPOR KULÜBÜ</h2><p>22 Ekim 2026 Perşembe 14:30</p></div>
+    <div class="wrapper-layout"><div class="main-container"><div class="left-panel-wrapper"><div class="left-table-panel">
+    <table class="match-table">
+        <colgroup>
+            <col style="width:4%"><col style="width:30%"><col style="width:30%"><col style="width:12%">
+            <col style="width:5%"><col style="width:9%"><col style="width:10%">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>K - G</th>
+                <th>D - B</th>
+                <th>Oyun</th>
+                <th>S</th>
+                <th>Skor<br>K-G</th>
+                <th>IMP<br>K-G</th>
+            </tr>
+        </thead>
+        <tbody><tr data-ns="T5NS" data-ew="T5EW" data-kg-score="620.0">
+            <td class="sira-hucre" style="color:#0f172a; font-size:12px; opacity:0.7;">1</td>
+            <td style="color:#0f172a; font-size:12px; text-align:left;">Tekin Iğdır<br>Sadık Korkmaz</td>
+            <td style="color:#0f172a; font-size:12px; text-align:left;">Sami Kaplan<br>Mehmet Şirin</td>
+            <td style="color:#0f172a; font-size:13px;">4<span style='color:#FF0000;'>♥</span> K</td>
+            <td style="color:#0f172a; font-weight:bold;">=</td>
+            <td style="color:#0f8b61; font-weight:bold;">+620</td>
+            <td style="color:#0f172a; font-weight:bold;">0.00</td>
+        </tr><tr data-ns="T3NS" data-ew="T3EW" data-kg-score="600.0">
+            <td class="sira-hucre" style="color:#0f172a; font-size:12px; opacity:0.7;">2</td>
+            <td style="color:#0f172a; font-size:12px; text-align:left;">Eşref Şirin<br>Orhan Caşur</td>
+            <td style="color:#0f172a; font-size:12px; text-align:left;">Adnan Ekşioğlu<br>Erol İlmez</td>
+            <td style="color:#0f172a; font-size:13px;">3N K</td>
+            <td style="color:#0f172a; font-weight:bold;">=</td>
+            <td style="color:#0f8b61; font-weight:bold;">+600</td>
+            <td style="color:#b91c1c; font-weight:bold;">-1.25</td>
+        </tr><tr data-ns="T2NS" data-ew="T2EW" data-kg-score="650.0">
+            <td class="sira-hucre" style="color:#0f172a; font-size:12px; opacity:0.7;">3</td>
+            <td style="color:#0f172a; font-size:12px; text-align:left;">Sonat Çerçioğlu<br>Hakan Akpınar</td>
+            <td style="color:#0f172a; font-size:12px; text-align:left;">Metin Usluduran<br>Metin Ekşioğlu</td>
+            <td style="color:#0f172a; font-size:13px;">4<span style='color:#FF0000;'>♥</span> K</td>
+            <td style="color:#0f172a; font-weight:bold;">+1</td>
+            <td style="color:#0f8b61; font-weight:bold;">+650</td>
+            <td style="color:#0f8b61; font-weight:bold;">+1.25</td>
+        </tr><tr data-ns="T4NS" data-ew="T4EW" data-kg-score="620.0">
+            <td class="sira-hucre" style="color:#0f172a; font-size:12px; opacity:0.7;">4</td>
+            <td style="color:#0f172a; font-size:12px; text-align:left;">Ümran Semerci<br>Serhan Serol</td>
+            <td style="color:#0f172a; font-size:12px; text-align:left;">Volkan Denizci<br>Merih Tokcan</td>
+            <td style="color:#0f172a; font-size:13px;">4<span style='color:#FF0000;'>♥</span> K</td>
+            <td style="color:#0f172a; font-weight:bold;">=</td>
+            <td style="color:#0f8b61; font-weight:bold;">+620</td>
+            <td style="color:#0f172a; font-weight:bold;">0.00</td>
+        </tr><tr data-ns="T1NS" data-ew="T1EW" data-kg-score="620.0">
+            <td class="sira-hucre" style="color:#0f172a; font-size:12px; opacity:0.7;">5</td>
+            <td style="color:#0f172a; font-size:12px; text-align:left;">A.Fikret Çevik<br>Serdar Alp</td>
+            <td style="color:#0f172a; font-size:12px; text-align:left;">Mehmet Ekşioğlu<br>Ali Kent</td>
+            <td style="color:#0f172a; font-size:13px;">4<span style='color:#FF0000;'>♥</span> K</td>
+            <td style="color:#0f172a; font-weight:bold;">=</td>
+            <td style="color:#0f8b61; font-weight:bold;">+620</td>
+            <td style="color:#0f172a; font-weight:bold;">0.00</td>
+        </tr></tbody></table></div></div>
+    <div class="right-hand-panel">
+    <div style="font-size:11px; background:rgba(255,255,255,0.1);
+    padding:6px; border-radius:4px; line-height:1.4; width:100%;
+    box-sizing:border-box;"><strong>Dağıtan:</strong> K
+    <br><strong>Zon:</strong> K-G Zonda</div>
+    <div class="card-panel"><span class="p-name" id="lbl-K">Kuzey</span>
+    <div class="suit"><span class="suit-symbol spade">♠</span> <span class="suit-cards suit-cards-compact">9865</span></div>
+    <div class="suit"><span class="suit-symbol heart">♥</span> <span class="suit-cards suit-cards-compact">A10976</span></div>
+    <div class="suit"><span class="suit-symbol diamond">♦</span> <span class="suit-cards suit-cards-compact">64</span></div>
+    <div class="suit"><span class="suit-symbol club">♣</span> <span class="suit-cards suit-cards-compact">A5</span></div></div>
+    <div style="font-size:10px; text-align:right; width:100%;
+    background:rgba(15,139,97,0.18); padding:6px; border-radius:4px;
+    line-height:1.4; box-sizing:border-box;">
+    <strong>Optimum</strong><br>[v4] K-G: 4♥S+1  (650)</div>
+    <div class="card-panel"><span class="p-name" id="lbl-B">Batı</span>
+    <div class="suit"><span class="suit-symbol spade">♠</span> <span class="suit-cards suit-cards-compact">732</span></div>
+    <div class="suit"><span class="suit-symbol heart">♥</span> <span class="suit-cards suit-cards-compact">53</span></div>
+    <div class="suit"><span class="suit-symbol diamond">♦</span> <span class="suit-cards suit-cards-compact">KQ2</span></div>
+    <div class="suit"><span class="suit-symbol club">♣</span> <span class="suit-cards suit-cards-compact">Q10764</span></div></div>
+    <div class="matrix">
+    <div class="z-b z-n">D</div>
+    <div class="z-b z-s"></div>
+    <div class="z-b z-w"></div>
+    <div class="z-b z-e"></div>
+    <div class="b-num">5</div></div><div class="card-panel"><span class="p-name" id="lbl-D">Doğu</span>
+    <div class="suit"><span class="suit-symbol spade">♠</span> <span class="suit-cards suit-cards-compact">KQJ10</span></div>
+    <div class="suit"><span class="suit-symbol heart">♥</span> <span class="suit-cards suit-cards-compact">Q42</span></div>
+    <div class="suit"><span class="suit-symbol diamond">♦</span> <span class="suit-cards suit-cards-compact">J87</span></div>
+    <div class="suit"><span class="suit-symbol club">♣</span> <span class="suit-cards suit-cards-compact">932</span></div></div>
+    <div class="hcp"><div class="hcp-c"></div>
+    <div class="hcp-c">8</div><div class="hcp-c"></div>
+    <div class="hcp-c">7</div>
+    <div class="hcp-c" style="background:#cbd5e1;"></div>
+    <div class="hcp-c">9</div><div class="hcp-c"></div>
+    <div class="hcp-c">16</div><div class="hcp-c"></div></div>
+    <div class="card-panel"><span class="p-name" id="lbl-G">Güney</span>
+    <div class="suit"><span class="suit-symbol spade">♠</span> <span class="suit-cards suit-cards-compact">A4</span></div>
+    <div class="suit"><span class="suit-symbol heart">♥</span> <span class="suit-cards suit-cards-compact">KJ8</span></div>
+    <div class="suit"><span class="suit-symbol diamond">♦</span> <span class="suit-cards suit-cards-compact">A10953</span></div>
+    <div class="suit"><span class="suit-symbol club">♣</span> <span class="suit-cards suit-cards-compact">KJ8</span></div></div><div class="dd-container"><div class="dd">
+    <div class="dd-c" style="background:#cbd5e1;"></div>
+    <div class="dd-c club">♣</div><div class="dd-c diamond">♦</div>
+    <div class="dd-c heart">♥</div><div class="dd-c spade">♠</div>
+    <div class="dd-c">N</div>
+    <div class="dd-c"><strong>N</strong></div><div class="dd-c">7</div>
+    <div class="dd-c">10</div><div class="dd-c">11</div>
+    <div class="dd-c">8</div><div class="dd-c">9</div>
+    <div class="dd-c"><strong>S</strong></div><div class="dd-c">7</div>
+    <div class="dd-c">10</div><div class="dd-c">11</div>
+    <div class="dd-c">8</div><div class="dd-c">9</div>
+    <div class="dd-c"><strong>E</strong></div><div class="dd-c">5</div>
+    <div class="dd-c">3</div><div class="dd-c">2</div>
+    <div class="dd-c">4</div><div class="dd-c">4</div>
+    <div class="dd-c"><strong>W</strong></div><div class="dd-c">5</div>
+    <div class="dd-c">3</div><div class="dd-c">2</div>
+    <div class="dd-c">4</div><div class="dd-c">4</div>
+    </div></div>
+    <hr style="grid-column: span 3; border: 0;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    width: 100%; margin: 12px 0 6px 0;"><div class="button-bar">
+        <a href="index.html?v=1792681732.9903927" class="btn">Turnuva</a>
+        <a href="#" class="btn" onclick="var q=new URLSearchParams(window.location.search).get('pair');if(q && /^pair-(N-S|E-W)-[^/?#]+\.html$/.test(q)){window.location.href=q+'?v=1792681732.9903927';}else{window.location.href='pair-N-S-T5NS.html?v=1792681732.9903927';} return false;">Çift Özeti</a>
+        <a href="https://dds.bridgewebs.com/bsol2/ddummy.htm?board=5&dealer=N&vul=NS&north=9865.AT976.64.A5&south=A4.KJ8.AT953.KJ8&east=KQJT.Q42.J87.932&west=732.53.KQ2.QT764&club=kup.brickulubu.com&event=2026-10-22&analyse=true" class="btn" target="_blank" rel="noopener" style="background:#0f8b61;">▶ Play</a>
+        <a href="board-4.html?v=1792681732.9903927" class="btn" id="prevBtn">&lt;</a>
+        <select class="btn-select" id="boardSelect" onchange="location = this.value;">
+            <option value='board-1.html?v=1792681732.9903927' >Bord 1</option><option value='board-2.html?v=1792681732.9903927' >Bord 2</option><option value='board-3.html?v=1792681732.9903927' >Bord 3</option><option value='board-4.html?v=1792681732.9903927' >Bord 4</option><option value='board-5.html?v=1792681732.9903927' selected>Bord 5</option><option value='board-6.html?v=1792681732.9903927' >Bord 6</option><option value='board-7.html?v=1792681732.9903927' >Bord 7</option><option value='board-8.html?v=1792681732.9903927' >Bord 8</option><option value='board-9.html?v=1792681732.9903927' >Bord 9</option><option value='board-10.html?v=1792681732.9903927' >Bord 10</option><option value='board-11.html?v=1792681732.9903927' >Bord 11</option><option value='board-12.html?v=1792681732.9903927' >Bord 12</option><option value='board-13.html?v=1792681732.9903927' >Bord 13</option><option value='board-14.html?v=1792681732.9903927' >Bord 14</option><option value='board-15.html?v=1792681732.9903927' >Bord 15</option><option value='board-16.html?v=1792681732.9903927' >Bord 16</option>
+        </select>
+        <a href="board-6.html?v=1792681732.9903927" class="btn" id="nextBtn">&gt;</a>
+        <script>
+        (function() {
+            var pairQ = new URLSearchParams(location.search).get('pair');
+            if (!pairQ) return;
+            var prev = document.getElementById('prevBtn');
+            var next = document.getElementById('nextBtn');
+            if (prev) prev.href += '&pair=' + encodeURIComponent(pairQ);
+            if (next) next.href += '&pair=' + encodeURIComponent(pairQ);
+            var sel = document.getElementById('boardSelect');
+            if (sel) Array.from(sel.options).forEach(function(opt) { opt.value += '&pair=' + encodeURIComponent(pairQ); });
+        })();
+        </script>
+    </div></div></div></div>
+    <div class="nav-footer">
+    <a href="../../index.html" 
+    style="color:#064e3b; font-weight:bold; text-decoration:none;">
+    ➔Ana Sayfaya Dön</a></div>
+    <div class="site-footer" style="text-align:center; margin-top:25px; padding:14px;
+    background:linear-gradient(135deg, #1e293b, #0f172a); color:rgba(255,255,255,0.85);
+    font-size:12px; border-radius:8px;">© 2026 Kup Bri̇ç Spor Kulübü | Tüm Hakları Saklıdır</div>
+    <script>var PAIR_BOARDS = {"T5NS": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], "T5EW": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], "T3NS": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], "T3EW": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], "T2NS": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], "T2EW": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], "T4NS": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], "T4EW": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], "T1NS": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], "T1EW": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]}; var CURRENT_BOARD = 5; var PAIR_NAMES = {"T2NS": "Sonat Çerçioğlu - Hakan Akpınar", "T4EW": "Volkan Denizci - Merih Tokcan", "T5EW": "Sami Kaplan - Mehmet Şirin", "T3EW": "Adnan Ekşioğlu - Erol İlmez", "T1NS": "A.Fikret Çevik - Serdar Alp", "T3NS": "Eşref Şirin - Orhan Caşur", "T5NS": "Tekin Iğdır - Sadık Korkmaz", "T1EW": "Mehmet Ekşioğlu - Ali Kent", "T2EW": "Metin Usluduran - Metin Ekşioğlu", "T4NS": "Ümran Semerci - Serhan Serol"}; var XML_BOARD_SORT = true;</script><script>
+    (function() {
+        var tbody = document.querySelector('.match-table tbody');
+        if (!tbody) return;
+        var rows = Array.from(tbody.querySelectorAll('tr[data-kg-score]'));
+        var pairParam = new URLSearchParams(location.search).get('pair');
+        var pairMatch = String(pairParam || '').match(/pair-(N-S|E-W)-([^/?#]+)\.html(?:[?#].*)?$/i);
+        var selectedRow = null;
+        if (pairMatch) {
+            var pairId = pairMatch[2];
+            selectedRow = rows.find(function(row) {
+                return (pairMatch[1].toUpperCase() === 'N-S' ? row.dataset.ns : row.dataset.ew) === pairId;
+            }) || null;
+        }
+        rows.sort(function(a, b) {
+            var aScore = Number.parseFloat(a.dataset.kgScore);
+            var bScore = Number.parseFloat(b.dataset.kgScore);
+            if (!Number.isFinite(aScore)) aScore = Number.NEGATIVE_INFINITY;
+            if (!Number.isFinite(bScore)) bScore = Number.NEGATIVE_INFINITY;
+            return bScore - aScore;
+        });
+        var fragment = document.createDocumentFragment();
+        var selectedRank = selectedRow ? rows.indexOf(selectedRow) + 1 : 0;
+        if (selectedRow) {
+            selectedRow.classList.add('selected-pair-row');
+            var selectedCopy = selectedRow.cloneNode(true);
+            selectedCopy.classList.add('selected-pair-copy');
+            var copiedRank = selectedCopy.querySelector('.sira-hucre');
+            if (copiedRank) copiedRank.textContent = String(selectedRank);
+            var copiedTip = selectedCopy.querySelector('.tip-wrap[data-tip]');
+            if (copiedTip) {
+                copiedTip.removeAttribute('data-tip');
+                copiedTip.classList.remove('tip-wrap');
+            }
+            fragment.appendChild(selectedCopy);
+            var spacer = document.createElement('tr');
+            spacer.setAttribute('aria-hidden', 'true');
+            spacer.innerHTML = '<td colspan="7" style="height:10px;padding:0;border:0;background:transparent;"></td>';
+            fragment.appendChild(spacer);
+        }
+        rows.forEach(function(row, index) {
+            var rank = row.querySelector('.sira-hucre');
+            if (rank) rank.textContent = String(index + 1);
+            fragment.appendChild(row);
+        });
+        while (tbody.firstChild) tbody.removeChild(tbody.firstChild);
+        tbody.appendChild(fragment);
+    })();
+    </script><script>
+    (function() {
+        var qPair = new URLSearchParams(location.search).get('pair');
+        var pairMatch = qPair && qPair.match(/pair-(N-S|E-W)-([^/?#]+)\.html(?:[?#].*)?$/i);
+        if (pairMatch) {
+            localStorage.setItem('last_bridge_pair', new URL(qPair, location.href).href);
+        }
+        if (!pairMatch) return;
+        var myDirection = pairMatch[1].toUpperCase();
+        var myId = pairMatch[2];
+        var matched = null;
+        document.querySelectorAll('tr[data-ns], tr[data-ew]').forEach(function(tr) {
+            var rowPairId = myDirection === 'N-S' ? tr.dataset.ns : tr.dataset.ew;
+            if (rowPairId === myId) {
+                tr.style.background = '#ecfdf5';
+                matched = tr;
+            }
+        });
+        if (matched) {
+            var origTable = matched.closest('table');
+            var thead = origTable.querySelector('thead');
+            var tbody = origTable.querySelector('tbody');
+            if (!XML_BOARD_SORT) {
+                var rowClone = matched.cloneNode(true);
+                rowClone.style.background = '#ecfdf5';
+                var cloneTip = rowClone.querySelector('.tip-wrap[data-tip]');
+                if (cloneTip) {
+                    cloneTip.removeAttribute('data-tip');
+                    cloneTip.classList.remove('tip-wrap');
+                    cloneTip.style.cursor = 'default';
+                    cloneTip.style.borderBottom = 'none';
+                }
+                var spacerRow = document.createElement('tr');
+                var spacerCell = document.createElement('td');
+                spacerCell.colSpan = thead.querySelectorAll('th').length;
+                spacerCell.style.cssText = 'height:12px;padding:0;border:0;background:transparent;';
+                spacerRow.appendChild(spacerCell);
+                tbody.insertBefore(rowClone, tbody.firstChild);
+                tbody.insertBefore(spacerRow, rowClone.nextSibling);
+            }
+        }
+
+        // Kendi çiftimizin isimlerini KUZEY/GÜNEY/DOĞU/BATI etiketlerinin yerine bas,
+        // ve kendi satırımızdaki kontrat mouseover'ını (isimler zaten üstte yazılı olduğu
+        // için) Kontrat hücresinden alıp Sonuç hücresine taşı.
+        if (matched && typeof PAIR_NAMES !== 'undefined') {
+            var nsNames = (PAIR_NAMES[matched.dataset.ns] || '').split(' - ');
+            var ewNames = (PAIR_NAMES[matched.dataset.ew] || '').split(' - ');
+            var lblK = document.getElementById('lbl-K');
+            var lblG = document.getElementById('lbl-G');
+            var lblD = document.getElementById('lbl-D');
+            var lblB = document.getElementById('lbl-B');
+            if (lblK && nsNames[0]) lblK.textContent = nsNames[0].trim();
+            if (lblG && nsNames[1]) lblG.textContent = nsNames[1].trim();
+            if (lblD && ewNames[0]) lblD.textContent = ewNames[0].trim();
+            if (lblB && ewNames[1]) lblB.textContent = ewNames[1].trim();
+
+            var kendiTip = matched.querySelector('.tip-wrap[data-tip]');
+            if (kendiTip) {
+                var tipVerisi = kendiTip.getAttribute('data-tip');
+                kendiTip.removeAttribute('data-tip');
+                kendiTip.classList.remove('tip-wrap');
+                kendiTip.style.cursor = 'default';
+                kendiTip.style.borderBottom = 'none';
+                var sonucHucresi = matched.children[2]; // 0:Kontrat 1:Dekleran 2:Sonuç
+                if (sonucHucresi && tipVerisi) {
+                    sonucHucresi.classList.add('tip-wrap');
+                    sonucHucresi.setAttribute('data-tip', tipVerisi);
+                    sonucHucresi.style.cursor = 'help';
+                    sonucHucresi.style.borderBottom = '1px dotted currentColor';
+                    if (window._baglaTip) window._baglaTip(sonucHucresi);
+                }
+            }
+        }
+
+        // Bu çiftin oynamadığı bordları dropdown'dan çıkar, oklar sadece oynadığı bordlar arasında gezsin
+        if (typeof PAIR_BOARDS !== 'undefined' && PAIR_BOARDS[myId]) {
+            var played = PAIR_BOARDS[myId];
+            var sel = document.getElementById('boardSelect');
+            if (sel) {
+                Array.from(sel.options).forEach(function(opt) {
+                    var bm = opt.value.match(/board-(\d+)\.html/);
+                    if (bm && played.indexOf(parseInt(bm[1], 10)) === -1) {
+                        opt.remove();
+                    }
+                });
+            }
+            var idx = played.indexOf(CURRENT_BOARD);
+            if (idx !== -1) {
+                var prevB = played[(idx - 1 + played.length) % played.length];
+                var nextB = played[(idx + 1) % played.length];
+                var prevBtn = document.getElementById('prevBtn');
+                var nextBtn = document.getElementById('nextBtn');
+                var pairQuery = new URLSearchParams(location.search).get('pair');
+                var versionQuery = '?v=1792681732.9903927' + (pairQuery ? '&pair=' + encodeURIComponent(pairQuery) : '');
+                if (prevBtn) prevBtn.href = 'board-' + prevB + '.html' + versionQuery;
+                if (nextBtn) nextBtn.href = 'board-' + nextB + '.html' + versionQuery;
+            }
+        }
+    })();
+    </script><div id="global-tooltip"></div>
+<script>
+(function(){
+    var tip = document.getElementById('global-tooltip');
+    if (!tip) return;
+    function konumla(el){
+        tip.style.left = '0px'; tip.style.top = '0px'; tip.style.display = 'block';
+        var r = el.getBoundingClientRect();
+        var tr = tip.getBoundingClientRect();
+        var left = r.left + r.width/2 - tr.width/2;
+        var top = r.bottom + 6;
+        if (top + tr.height > window.innerHeight) top = r.top - tr.height - 6;
+        if (top < 4) top = 4;
+        if (top + tr.height > window.innerHeight - 4) top = Math.max(4, window.innerHeight - tr.height - 4);
+        if (left < 4) left = 4;
+        if (left + tr.width > window.innerWidth - 4) left = window.innerWidth - tr.width - 4;
+        tip.style.left = left + 'px';
+        tip.style.top = top + 'px';
+    }
+    function bagla(el){
+        el.addEventListener('mouseenter', function(){
+            if (window.innerWidth <= 768) return;
+            var t = el.getAttribute('data-tip');
+            if (!t) return;
+            tip.innerHTML = t;
+            konumla(el);
+        });
+        el.addEventListener('mouseleave', function(){ tip.style.display = 'none'; });
+    }
+    document.querySelectorAll('.tip-wrap[data-tip]').forEach(bagla);
+    window._baglaTip = bagla;
+})();
+</script></body></html>
