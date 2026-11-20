@@ -1,0 +1,180 @@
+/* Sekans Briç Spor Kulübü — ortak stil */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --felt:#0B3B2E;
+  --felt-light:#164A3A;
+  --paper:#F7F3E9;
+  --paper-dim:#EFE9DA;
+  --wine:#7A1F2B;
+  --brass:#B08D3D;
+  --ink:#1C1A17;
+  --ink-soft:#4B463F;
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Inter',sans-serif;
+  line-height:1.55;
+}
+h1,h2,h3{
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  margin:0 0 .4em 0;
+  color:var(--felt);
+}
+p{max-width:62ch; color:var(--ink-soft);}
+a{color:inherit;}
+
+/* ---------- Kart-yelpaze motifi ---------- */
+.card-fan{position:relative; height:220px; margin:0 auto;}
+.card-fan .card{
+  position:absolute; top:0; left:50%;
+  width:92px; height:132px;
+  background:var(--paper);
+  border:1px solid rgba(11,59,46,.15);
+  border-radius:11px;
+  box-shadow:0 14px 30px rgba(11,59,46,.28);
+  padding:10px 11px;
+  display:flex; flex-direction:column; justify-content:space-between;
+  font-family:'Fraunces',serif;
+  color:var(--wine);
+  transform-origin:bottom center;
+}
+.card-fan .card span{display:block; line-height:1;}
+.card-fan .card .rank{font-size:20px; font-weight:600;}
+.card-fan .card .suit{font-size:20px; align-self:flex-end;}
+.card-fan .c1{margin-left:-190px; transform:rotate(-18deg);}
+.card-fan .c2{margin-left:-130px; transform:rotate(-9deg) translateY(-10px);}
+.card-fan .c3{margin-left:-46px;  transform:rotate(0deg)  translateY(-16px);}
+.card-fan .c4{margin-left:38px;   transform:rotate(9deg)  translateY(-10px);}
+.card-fan .c5{margin-left:122px;  transform:rotate(18deg);}
+
+.card-fan.small{height:44px; transform:scale(.34); transform-origin:left center; margin:0;}
+
+/* ---------- Üst gezinme ---------- */
+.topnav{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 6vw;
+  background:var(--felt);
+  color:var(--paper);
+}
+.brand{display:flex; align-items:center; gap:2px; text-decoration:none; color:var(--paper);}
+.brand-mark{width:60px; height:44px; overflow:hidden; position:relative;}
+.brand-name{font-family:'Fraunces',serif; font-size:20px; font-weight:600; letter-spacing:.2px;}
+.navlinks{display:flex; gap:34px; font-size:15px;}
+.navlinks a{text-decoration:none; color:var(--paper); opacity:.82; padding-bottom:4px; border-bottom:2px solid transparent; transition:opacity .2s, border-color .2s;}
+.navlinks a:hover{opacity:1;}
+.navlinks a.active{opacity:1; border-color:var(--brass);}
+
+/* ---------- Genel yerleşim ---------- */
+.wrap{max-width:1080px; margin:0 auto; padding:0 6vw;}
+section{padding:72px 0;}
+.section-alt{background:var(--paper-dim);}
+
+.hero{padding:88px 0 60px 0; text-align:left;}
+.hero .eyebrow{color:var(--wine); font-size:15px; margin-bottom:14px;}
+.hero h1{font-size:44px; max-width:14ch; letter-spacing:-.5px;}
+.hero p.lead{font-size:18px; max-width:46ch; margin-top:18px;}
+.hero-fan{margin-top:56px;}
+
+.btn{
+  display:inline-block; padding:13px 26px; border-radius:8px;
+  text-decoration:none; font-weight:600; font-size:15px;
+  border:1px solid transparent;
+}
+.btn-solid{background:var(--wine); color:var(--paper);}
+.btn-solid:hover{background:#611722;}
+.btn-outline{border-color:var(--felt); color:var(--felt);}
+.btn-outline:hover{background:var(--felt); color:var(--paper);}
+.btn-row{display:flex; gap:16px; margin-top:34px; flex-wrap:wrap;}
+
+.tiles{display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:10px;}
+.tile{
+  background:var(--paper); border:1px solid rgba(11,59,46,.14);
+  border-left:4px solid var(--brass);
+  padding:30px 28px; text-decoration:none; display:block;
+}
+.tile h3{font-size:21px; margin-bottom:8px;}
+.tile p{margin:0; font-size:15px;}
+.tile .go{display:block; margin-top:16px; font-size:14px; color:var(--wine); font-weight:600;}
+
+/* ---------- Kulübümüz ---------- */
+.page-head{padding:64px 0 20px 0;}
+.page-head h1{font-size:36px;}
+
+.gallery{
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:18px;
+  margin-top:34px;
+}
+.frame{
+  aspect-ratio:4/3; border-radius:6px;
+  background:linear-gradient(135deg, var(--felt-light), var(--felt));
+  display:flex; align-items:center; justify-content:center;
+  position:relative; overflow:hidden;
+  border:6px solid var(--paper); outline:1px solid rgba(11,59,46,.18);
+}
+.frame .placeholder-label{
+  color:rgba(247,243,233,.75); font-size:13px; letter-spacing:.3px;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+}
+.frame svg{width:34px; height:34px; opacity:.8;}
+/* Gerçek fotoğrafı eklemek için: .frame içindeki placeholder-label'ı silip
+   <img src="fotograflar/isim.jpg" alt="..."> etiketiyle değiştirin. */
+.frame img{width:100%; height:100%; object-fit:cover;}
+
+/* ---------- Takvim ---------- */
+.cal-box{border:1px solid rgba(11,59,46,.18); border-radius:8px; overflow:hidden; margin-top:20px;}
+.cal-titlebar{background:var(--felt); color:var(--paper); padding:16px 20px; font-family:'Fraunces',serif; font-size:18px;}
+.cal-nav{display:flex; align-items:center; justify-content:center; gap:14px; padding:16px; background:var(--paper-dim);}
+.cal-nav select{padding:7px 10px; border-radius:6px; border:1px solid rgba(11,59,46,.3); font-family:'Inter',sans-serif; font-weight:600; background:var(--paper);}
+.cal-nav button{background:var(--felt); color:var(--paper); border:none; border-radius:6px; padding:8px 16px; cursor:pointer; font-size:15px;}
+.cal-nav button:hover{background:var(--felt-light);}
+table.cal-grid{width:100%; border-collapse:collapse; table-layout:fixed;}
+table.cal-grid th{background:var(--paper); color:var(--ink-soft); padding:8px 4px; font-size:12px; font-weight:600; border-bottom:1px solid rgba(11,59,46,.15);}
+table.cal-grid td{border:1px solid rgba(11,59,46,.1); height:64px; vertical-align:top; text-align:right; padding:6px 8px; font-size:13px; color:var(--ink);}
+table.cal-grid td.empty{background:var(--paper-dim);}
+.cal-tlink{display:block; text-align:right; color:var(--wine); font-weight:600; text-decoration:none; background:#F3E4E6; border-radius:4px; padding:2px 6px; margin-top:4px; font-size:11px;}
+.cal-tlink:hover{text-decoration:underline;}
+.cal-empty-note{padding:14px 20px; font-size:14px; color:var(--ink-soft); border-top:1px dashed rgba(11,59,46,.2); display:none;}
+
+/* ---------- Altbilgi ---------- */
+footer{background:var(--felt); color:rgba(247,243,233,.7); text-align:center; padding:30px 6vw; font-size:14px;}
+
+@media (max-width:760px){
+  .navlinks{gap:18px; font-size:14px;}
+  .hero h1{font-size:32px;}
+  .tiles{grid-template-columns:1fr;}
+  .gallery{grid-template-columns:1fr 1fr;}
+  .card-fan{transform:scale(.72);}
+}
+
+
+/* ---------- Ana sayfa duyuru afişi ---------- */
+.announcement{
+  padding:32px 0 48px;
+}
+.announcement-inner{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+}
+.announcement-poster{
+  display:block;
+  width:100%;
+  max-width:760px;
+  height:auto;
+  margin:0 auto;
+  border:1px solid rgba(11,59,46,.14);
+  border-radius:8px;
+  box-shadow:0 12px 30px rgba(11,59,46,.12);
+}
+@media (max-width:760px){
+  .announcement{padding:18px 0 30px;}
+  .announcement-poster{border-radius:5px;}
+}

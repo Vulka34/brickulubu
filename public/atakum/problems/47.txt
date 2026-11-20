@@ -1,0 +1,7 @@
+imp: 3NT, Atak ♠R
+zon: 
+kuzey: 6 / 7542 / RDVT / ARVT
+guney: AV54 / A3 / 8532 / D97
+ihale1: 1♠, Kontr, Pas, 2SA
+ihale2: Pas, 3SA, Herkes Pas
+yorum: Kontrat 3NT, Atak ♠R, Nasıl oynarsınız?

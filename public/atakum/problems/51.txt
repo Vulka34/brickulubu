@@ -1,0 +1,10 @@
+imp: 7♠, Atak ♥R
+zon: 
+kuzey: A964 / V32 / 7 / ARVT8
+guney: RDVT87 / A / ARD / 932
+ihale1:-, 1♣, Pas, 1♠ 
+ihale2:Pas, 2♠, Pas, 4SA
+ihale3:Pas, 5♥, Pas, 5SA
+ihale3:Pas, 6♣, Pas, 7♠ 
+ihale3:Pas, Pas, Pas,
+yorum: 7♠, Atak ♥R, Empas mı atacaksınız, düşürmeye mi oynayacaksınız?

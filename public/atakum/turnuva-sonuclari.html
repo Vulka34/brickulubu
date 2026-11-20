@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turnuva Sonuçları — Sekans Briç Spor Kulübü</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="brand">
+    <span class="brand-mark">
+      <span class="card-fan small">
+        <span class="card c1"><span class="rank">10</span><span class="suit">♠</span></span>
+        <span class="card c2"><span class="rank">J</span><span class="suit">♠</span></span>
+        <span class="card c3"><span class="rank">Q</span><span class="suit">♠</span></span>
+        <span class="card c4"><span class="rank">K</span><span class="suit">♠</span></span>
+        <span class="card c5"><span class="rank">A</span><span class="suit">♠</span></span>
+      </span>
+    </span>
+    <span class="brand-name">Sekans Briç Spor Kulübü</span>
+  </a>
+  <div class="navlinks">
+    <a href="index.html">Ana Sayfa</a>
+    <a href="kulubumuz.html">Kulübümüz</a>
+    <a href="turnuva-sonuclari.html" class="active">Turnuva Sonuçları</a>
+  </div>
+</nav>
+
+<div class="wrap page-head">
+  <h1>Turnuva Sonuçları</h1>
+  <p>Geçmiş ve güncel turnuva sonuçlarımızı aşağıdaki takvimden takip edebilirsiniz. Bir turnuva oynanan gün, o günün üzerinde bağlantı olarak görünür.</p>
+</div>
+
+<div class="wrap" style="padding-bottom:80px;">
+  <div class="cal-box">
+    <div class="cal-titlebar">Turnuva Takvimi</div>
+    <div class="cal-nav">
+      <button onclick="calAdim(-1)">◀</button>
+      <select id="calAy" onchange="calGoster()"></select>
+      <select id="calYil" onchange="calGoster()"></select>
+      <button onclick="calAdim(1)">▶</button>
+    </div>
+    <div id="calAylar"></div>
+    <div class="cal-empty-note" id="calBosNot">Bu ay için henüz kayıtlı turnuva yok.</div>
+  </div>
+</div>
+
+<footer>Sekans Briç Spor Kulübü</footer>
+
+<script>
+// Turnuva verisi — bir turnuva sonucu yayınlandığında buraya bir satır eklemeniz yeterli.
+// Anahtar "YYYY-MM-DD" formatında, değer o günün turnuva listesi.
+const TOURNAMENTS = {
+  // "2026-09-05": [{ etiket: "Cumartesi-1", link: "turnuva/20260905-1/index.html" }]
+};
+
+const AYLAR = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+const GUNLER = ["Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi","Pazar"];
+
+const bugun = new Date();
+const BASLANGIC_YILI = bugun.getFullYear();
+const YIL_SAYISI = 2; // daha uzun bir takvim istediğinizde sadece bu sayıyı artırın
+
+function ayGunleri(yil, ay){ // ay: 1-12
+  const ilkGun = new Date(yil, ay - 1, 1);
+  const sonGun = new Date(yil, ay, 0).getDate();
+  const bosluk = (ilkGun.getDay() + 6) % 7; // Pazartesi = 0
+  let gunler = [];
+  for (let i = 0; i < bosluk; i++) gunler.push(0);
+  for (let g = 1; g <= sonGun; g++) gunler.push(g);
+  while (gunler.length % 7 !== 0) gunler.push(0);
+  let haftalar = [];
+  for (let i = 0; i < gunler.length; i += 7) haftalar.push(gunler.slice(i, i + 7));
+  return haftalar;
+}
+
+function tarihAnahtari(yil, ay, gun){
+  return `${yil}-${String(ay).padStart(2,'0')}-${String(gun).padStart(2,'0')}`;
+}
+
+function ayHtml(yil, ay){
+  const haftalar = ayGunleri(yil, ay);
+  let satirlar = "";
+  haftalar.forEach(hafta => {
+    satirlar += "<tr>";
+    hafta.forEach(gun => {
+      if (gun === 0){
+        satirlar += '<td class="empty"></td>';
+      } else {
+        const kayitlar = TOURNAMENTS[tarihAnahtari(yil, ay, gun)] || [];
+        const linkler = kayitlar.map(k => `<a class="cal-tlink" href="${k.link}">${k.etiket}</a>`).join("");
+        satirlar += `<td><div>${gun}</div>${linkler}</td>`;
+      }
+    });
+    satirlar += "</tr>";
+  });
+  const baslikTh = GUNLER.map(g => `<th>${g}</th>`).join("");
+  return `<div class="cal-month" id="cal-${yil}-${String(ay).padStart(2,'0')}">
+    <table class="cal-grid"><thead><tr>${baslikTh}</tr></thead><tbody>${satirlar}</tbody></table>
+  </div>`;
+}
+
+function takvimiOlustur(){
+  const aySel = document.getElementById('calAy');
+  const yilSel = document.getElementById('calYil');
+  aySel.innerHTML = AYLAR.map((ad, i) => `<option value="${String(i+1).padStart(2,'0')}">${ad}</option>`).join("");
+  let yilHtml = "";
+  for (let y = BASLANGIC_YILI; y < BASLANGIC_YILI + YIL_SAYISI; y++){
+    yilHtml += `<option value="${y}">${y}</option>`;
+  }
+  yilSel.innerHTML = yilHtml;
+  aySel.value = String(bugun.getMonth() + 1).padStart(2,'0');
+  yilSel.value = String(bugun.getFullYear());
+
+  let tumAylar = "";
+  for (let y = BASLANGIC_YILI; y < BASLANGIC_YILI + YIL_SAYISI; y++){
+    for (let a = 1; a <= 12; a++){
+      tumAylar += ayHtml(y, a);
+    }
+  }
+  document.getElementById('calAylar').innerHTML = tumAylar;
+  calGoster();
+}
+
+function calGoster(){
+  const ay = document.getElementById('calAy').value;
+  const yil = document.getElementById('calYil').value;
+  document.querySelectorAll('.cal-month').forEach(d => d.style.display = 'none');
+  const hedef = document.getElementById(`cal-${yil}-${ay}`);
+  if (hedef){
+    hedef.style.display = 'block';
+    const hicKayitYok = !hedef.querySelector('.cal-tlink');
+    document.getElementById('calBosNot').style.display = hicKayitYok ? 'block' : 'none';
+  }
+}
+
+function calAdim(delta){
+  const aySel = document.getElementById('calAy');
+  const yilSel = document.getElementById('calYil');
+  let ay = parseInt(aySel.value, 10) + delta;
+  let yil = parseInt(yilSel.value, 10);
+  if (ay < 1){ ay = 12; yil -= 1; }
+  if (ay > 12){ ay = 1; yil += 1; }
+  if (!yilSel.querySelector(`option[value="${yil}"]`)) return;
+  aySel.value = String(ay).padStart(2,'0');
+  yilSel.value = String(yil);
+  calGoster();
+}
+
+takvimiOlustur();
+</script>
+
+</body>
+</html>

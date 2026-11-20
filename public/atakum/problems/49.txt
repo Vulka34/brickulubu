@@ -1,0 +1,8 @@
+imp: IMP
+zon: K-G zonda
+kuzey: R1064 / A64 / 82 / AR105
+guney: D52 / R83 / RDV3 / DV6
+ihale1: 1♥, Pas, Pas, 1SA*
+ihale2: Pas, 3SA, Herkes Pas
+not: *Uyandırma (balancing) Sanzatusu: 11-15 puan
+yorum: Atak ♥D. Ortağınıza bravo! 14 puanına rağmen konuşmamış, sizden gelebilecek 2♦ cevabına hazır olmadığından kontr atmamış ve şimdi 14 puanı açtı size. Hadi siz de oyunu yapın artık…

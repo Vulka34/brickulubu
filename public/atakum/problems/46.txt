@@ -1,0 +1,14 @@
+IMP,K-G zonda
+Dealer:G
+kuzey: D87 / 543 / R6 / R5432
+guney: ARVT9 / A2 / A5432 / A
+ihale1: 1♠, Pas, 2♠, Pas
+ihale2: 2NT*, Pas, 3♣*, Pas
+ihale3: 3♦*, Pas, 4♣*, Pas
+ihale4: 4NT*, Pas, 5♦*, Pas
+ihale5: 5♥*, Pas, 6♥*, Pas
+ihale6: 6♠, Herkes pas
+
+not: *Uzun trial-bid yapmak istiyorum. *Tamam, hangi renkten? *Karodan, *Karodan A/R var, ayrıca treflden de, *Key-cards sorusu, *0 KC, *Koz Dam sorusu, *Var, ya kör R ya da diğer iki R da var
+
+yorum: Atak ♥R. Kontratı garantiye almak için nasıl oynarsınız? 

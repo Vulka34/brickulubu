@@ -1,0 +1,8 @@
+RewriteEngine On
+# www olmayan istekleri www'e yönlendir
+RewriteCond %{HTTP_HOST} ^atakum.brickulubu\.com [NC]
+RewriteRule ^(.*)$ https://www.atakum.brickulubu.com/$1 [R=301,L]
+
+# http isteklerini https'ye yönlendir
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://www.atakum.brickulubu.com/$1 [R=301,L]   

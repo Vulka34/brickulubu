@@ -1,0 +1,724 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Şenol TURAN - Önder ARSLAN Özeti</title><style>
+        body { background:#f8fafc; color:#0f172a; font-family:sans-serif; padding:10px; margin:0; } 
+        .club-header { text-align:center; margin-bottom:15px; background:linear-gradient(135deg, #1e293b, #0f172a); color:white; padding:15px; border-radius:10px; }
+        .club-header h2 { margin:0; font-size:22px; color:#38bdf8; } .club-header p { margin:5px 0 0 0; font-size:13px; opacity:0.8; font-weight:bold; }
+        .summary-card { max-width:600px; margin:15px auto; background:white; padding:15px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.05); text-align:center; }
+        .p-avatar { width:65px; height:65px; background:#e2e8f0; border-radius:50%; margin:5px auto; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:32px; }
+        .p-names { font-size:16px; font-weight:bold; color:#0f172a; margin:10px 0; }
+        .p-photos { display:flex; justify-content:center; gap:24px; margin:10px 0; }
+        .p-photo-item { display:flex; flex-direction:column; align-items:center; gap:6px; width:45%; max-width:220px; min-width:0; }
+        .p-photo-circle { position:relative; width:72px; height:72px; }
+        .p-photo-circle .p-avatar-fallback { position:absolute; inset:0; border-radius:50%; background:#e2e8f0; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:32px; }
+        .p-photo-circle img { position:absolute; inset:0; width:72px; height:72px; border-radius:50%; object-fit:cover; border:2px solid #e2e8f0; background:white; }
+        .p-photo-name { width:100%; font-size:11px; font-weight:bold; color:#0f172a; white-space:normal; overflow:visible; text-overflow:clip; overflow-wrap:break-word; text-align:center; }
+        .p-stats { font-size:13px; font-weight:bold; color:#b91c1c; margin-bottom:5px; }
+        .button-bar { display:flex; gap:4px; max-width:600px; margin:15px auto; justify-content:space-between; }
+        .btn { color:white; text-decoration:none; padding:10px; border-radius:6px; font-weight:bold; font-size:12px; text-align:center; flex:1; background:#0f8b61; }
+        .btn-active { background:#042f1a !important; border:1px solid #38bdf8; }
+        .match-table { max-width:900px; width:100%; border-collapse:collapse; font-size:12px; font-weight:600; text-align:center; margin:15px auto; background:white; border-radius:8px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.03); }
+        .match-table th { background:#334155; color:white; padding:10px 4px; border:1px solid #cbd5e1; }
+        .match-table td { padding:10px 4px; border:1px solid #e2e8f0; }
+        .tr-link { cursor:pointer; } .tr-link:hover { background:#f1f5f9; }
+        .badge { padding:3px 6px; border-radius:4px; color:#0f172a; font-weight:bold; font-size:11px; background:#ffffff; }
+        .badge-ns { border:none !important; } .badge-ew { border:none !important; }
+        .tip-wrap { cursor:help; border-bottom:1px dotted currentColor; }
+        @media (max-width:768px) { .tip-wrap { cursor:default !important; border-bottom:none !important; } }
+        #global-tooltip { display:none; position:fixed; z-index:1000; max-width:330px;
+            background:#042f1a; color:white; border-radius:8px; padding:10px 12px;
+            box-shadow:0 6px 18px rgba(0,0,0,0.35); font-size:11px; line-height:1.6; pointer-events:none; }
+        .board-tip { width:auto; max-width:340px; font-size:11px; line-height:1.5; white-space:normal; }
+        .board-tip-baslik { font-weight:bold; color:#38bdf8; margin-bottom:6px; font-size:12px; }
+        .bt-grid { display:flex; flex-direction:column; align-items:center; gap:5px; }
+        .bt-ns-row { display:flex; justify-content:center; }
+        .bt-ew-row { display:flex; align-items:center; justify-content:center; }
+        .bt-card { background:#ffffff; color:#0f172a; border-radius:5px; padding:5px 8px; font-size:10.5px; line-height:1.5; flex:0 0 auto; white-space:nowrap; }
+        .bt-suit { white-space:nowrap; }
+        .bt-spade { color:#0000CD; font-weight:bold; } .bt-heart { color:#FF0000; font-weight:bold; }
+        .bt-diamond { color:#FE7210; font-weight:bold; } .bt-club { color:#0f8b61; font-weight:bold; }
+        .bt-zb { position:absolute; font-size:10px; font-weight:bold; }
+        .board-tip-optimum { margin-top:8px; padding-top:6px; border-top:1px solid rgba(255,255,255,0.15); font-weight:bold; }
+        .kontrat-td, .atak-td { font-size:11px; }
+        .kontrat-td span, .atak-td span { font-size:0.7em; }
+        @media (min-width:641px) { .kontrat-td span, .atak-td span { font-size:11px; } }
+        .bord-th, .bord-td { width:2ch; max-width:2ch; padding-left:2px; padding-right:2px; }
+        .opponent-cell { text-align:center; padding:6px 4px !important; }
+        .rakip-names { display:flex; align-items:center; justify-content:center; width:100%; min-width:0; gap:4px; line-height:1.2; }
+        .rakip-player { flex:0 1 auto; min-width:0; max-width:calc(50% - 8px); overflow:hidden; text-overflow:clip; white-space:nowrap; text-align:center; }
+        .rakip-tire { flex:0 0 auto; }
+        .rakip-score { margin-top:6px; text-align:center; line-height:1.2; font-weight:bold; }
+        @media (max-width:640px) {
+            .rakip-names { flex-direction:column; gap:0; }
+            .rakip-player { flex:none; width:100%; max-width:100%; }
+            .rakip-tire { display:none; }
+        }
+    </style></head><body>
+    <script>localStorage.setItem('last_bridge_pair', window.location.href);</script>
+    <div class="club-header"><h2>SEKANS BRİÇ SPOR KULÜBÜ</h2><p>17 Kasım 2026 Salı 14:30</p></div>
+    <div class="summary-card">
+    <div class="p-photos"><div class="p-photo-item"><div class="p-photo-circle"><div class="p-avatar-fallback">👤</div><img src="https://brickulubu.com/players/062439.jpg" alt="Şenol TURAN" onerror="this.style.display='none';"></div><div class="p-photo-name">Şenol TURAN</div></div><div class="p-photo-item"><div class="p-photo-circle"><div class="p-avatar-fallback">👤</div><img src="https://brickulubu.com/players/063367.jpg" alt="Önder ARSLAN" onerror="this.style.display='none';"></div><div class="p-photo-name">Önder ARSLAN</div></div></div>
+    <div class="p-stats">Sıra: 7 &nbsp;&nbsp; Genel Puan: %39.58</div></div>
+    <div class="button-bar">
+        <a href="#" id="btn-sort-board" class="btn" onclick="siralaGoster('board'); return false;">Bord'a göre sırala</a>
+        <a href="#" id="btn-sort-round" class="btn" style="display:none;" onclick="siralaGoster('round'); return false;">Tur'a göre sırala</a>
+        <a href="index.html" class="btn btn-active">TURNUVA</a>
+        <a href="../../takvim.html" class="btn">Takvim</a>
+    </div>
+    <div id="view-board" style="display:none;"><table class="match-table"><thead><tr><th>Tur<br>Yön</th><th class="bord-th">B</th><th style="text-align:left;">Kontrat</th><th>Atak</th><th>+-</th><th>Skor<br>KG</th><th>Bord<br>%</th><th>Canlı<br>%</th><th>Rakip<br>%</th></tr></thead><tbody><tr class="tr-link" onclick="location.href='board-1.html?pair=pair-N-S-7.html';"><td rowspan="4">5<br><span class='badge badge-ns'>KG</span></td><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 6 5</div><div class="bt-suit bt-heart">♥8 5</div><div class="bt-suit bt-diamond">♦K Q 7 5 2</div><div class="bt-suit bt-club">♣A 5 3</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A Q 9 3</div><div class="bt-suit bt-heart">♥A J 9 3</div><div class="bt-suit bt-diamond">♦A 3</div><div class="bt-suit bt-club">♣K 7 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">1</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠J 10 8 4 2</div><div class="bt-suit bt-heart">♥Q 10 6 4</div><div class="bt-suit bt-diamond">♦9 8 4</div><div class="bt-suit bt-club">♣10</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠7</div><div class="bt-suit bt-heart">♥K 7 2</div><div class="bt-suit bt-diamond">♦J 10 6</div><div class="bt-suit bt-club">♣Q J 9 8 6 4</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 5♣Sx-2  (-300)</div>
+    </div>'><a href="board-1.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">1</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#0000CD;'>♠</span> B</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#b91c1c; font-weight:bold;">-420</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">25</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">25</td><td rowspan="4" class="opponent-cell">
+                        <div class="rakip-names" style="color:#2563eb;"><span class="rakip-player">Y. DOĞAN</span><span class="rakip-tire">-</span><span class="rakip-player">N. ŞANAY</span></div>
+                        <div class="rakip-score" style="color:#1e40af;">%44</div>
+                    </td></tr><tr class="tr-link" onclick="location.href='board-2.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 6</div><div class="bt-suit bt-heart">♥Q J 8</div><div class="bt-suit bt-diamond">♦Q 9 7 3</div><div class="bt-suit bt-club">♣9 7 6 4</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠J 8 5 4 3</div><div class="bt-suit bt-heart">♥A 7 5 3</div><div class="bt-suit bt-diamond">♦A J</div><div class="bt-suit bt-club">♣5 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">2</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠A 9 7</div><div class="bt-suit bt-heart">♥10 2</div><div class="bt-suit bt-diamond">♦10 6 5 4 2</div><div class="bt-suit bt-club">♣A Q 3</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q 10 2</div><div class="bt-suit bt-heart">♥K 9 6 4</div><div class="bt-suit bt-diamond">♦K 8</div><div class="bt-suit bt-club">♣K J 10 8</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 2♠W=  (-110)</div>
+    </div>'><a href="board-2.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">2</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3<span style='color:#0000CD;'>♠</span> B</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">-1</td>
+                    <td style="color:#0f8b61; font-weight:bold;">50</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">50</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">38</td></tr><tr class="tr-link" onclick="location.href='board-3.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠J 5 3</div><div class="bt-suit bt-heart">♥K Q 9 8</div><div class="bt-suit bt-diamond">♦J 10 6 3</div><div class="bt-suit bt-club">♣8 5</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 9 8 7 4</div><div class="bt-suit bt-heart">♥6 5 3</div><div class="bt-suit bt-diamond">♦8 4</div><div class="bt-suit bt-club">♣A K 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">3</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠10 6</div><div class="bt-suit bt-heart">♥A J 10 7</div><div class="bt-suit bt-diamond">♦A Q 9</div><div class="bt-suit bt-club">♣J 10 9 3</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A Q 2</div><div class="bt-suit bt-heart">♥4 2</div><div class="bt-suit bt-diamond">♦K 7 5 2</div><div class="bt-suit bt-club">♣Q 7 6 4</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 4♦Nx-3  (-500)</div>
+    </div>'><a href="board-3.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">3</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#FE7210;'>♦</span> G</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">-2</td>
+                    <td style="color:#b91c1c; font-weight:bold;">-100</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">50</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">42</td></tr><tr class="tr-link" onclick="location.href='board-4.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q J 10</div><div class="bt-suit bt-heart">♥A K Q 10</div><div class="bt-suit bt-diamond">♦A K 10 8 2</div><div class="bt-suit bt-club">♣3</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠5 4 3</div><div class="bt-suit bt-heart">♥7</div><div class="bt-suit bt-diamond">♦Q 9 7 6 5</div><div class="bt-suit bt-club">♣K 10 9 6</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">4</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠A K 9 6 2</div><div class="bt-suit bt-heart">♥J 9 8 5</div><div class="bt-suit bt-diamond">♦3</div><div class="bt-suit bt-club">♣8 7 4</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠8 7</div><div class="bt-suit bt-heart">♥6 4 3 2</div><div class="bt-suit bt-diamond">♦J 4</div><div class="bt-suit bt-club">♣A Q J 5 2</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 4♥S=  (620)</div>
+    </div>'><a href="board-4.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">4</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3N K</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">+1</td>
+                    <td style="color:#0f8b61; font-weight:bold;">630</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">50</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">44</td></tr><tr class="tr-link" onclick="location.href='board-5.html?pair=pair-N-S-7.html';"><td rowspan="4">3<br><span class='badge badge-ns'>KG</span></td><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q J 9</div><div class="bt-suit bt-heart">♥K 7 3</div><div class="bt-suit bt-diamond">♦A 8 5</div><div class="bt-suit bt-club">♣K 9 8 7</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A 10 8</div><div class="bt-suit bt-heart">♥A 8</div><div class="bt-suit bt-diamond">♦10 9 4</div><div class="bt-suit bt-club">♣10 6 4 3 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">5</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠7 4</div><div class="bt-suit bt-heart">♥J 6 5 4</div><div class="bt-suit bt-diamond">♦K Q J 7 6 2</div><div class="bt-suit bt-club">♣J</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 6 5 3 2</div><div class="bt-suit bt-heart">♥Q 10 9 2</div><div class="bt-suit bt-diamond">♦3</div><div class="bt-suit bt-club">♣A Q 5</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 4♠S=  (620)</div>
+    </div>'><a href="board-5.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">5</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#0000CD;'>♠</span> G</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">+1</td>
+                    <td style="color:#0f8b61; font-weight:bold;">650</td>
+                    <td style="color:#065f46; font-weight:bold; text-align:right;">75</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">50</td><td rowspan="4" class="opponent-cell">
+                        <div class="rakip-names" style="color:#2563eb;"><span class="rakip-player">N. KOSOVAERİ</span><span class="rakip-tire">-</span><span class="rakip-player">S.Y. ŞİMŞEK</span></div>
+                        <div class="rakip-score" style="color:#1e40af;">%50</div>
+                    </td></tr><tr class="tr-link" onclick="location.href='board-6.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q 9 6</div><div class="bt-suit bt-heart">♥10 6 5 2</div><div class="bt-suit bt-diamond">♦A 7 3</div><div class="bt-suit bt-club">♣10 9 5</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 4 2</div><div class="bt-suit bt-heart">♥J 9</div><div class="bt-suit bt-diamond">♦K Q J 8 2</div><div class="bt-suit bt-club">♣J 6 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">6</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠A 8 7</div><div class="bt-suit bt-heart">♥A Q 7</div><div class="bt-suit bt-diamond">♦10 9 5</div><div class="bt-suit bt-club">♣A K 8 7</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠J 10 5 3</div><div class="bt-suit bt-heart">♥K 8 4 3</div><div class="bt-suit bt-diamond">♦6 4</div><div class="bt-suit bt-club">♣Q 4 3</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 3NTW+1  (-630)</div>
+    </div>'><a href="board-6.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">6</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3N D</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">+1</td>
+                    <td style="color:#b91c1c; font-weight:bold;">-630</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">00</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">42</td></tr><tr class="tr-link" onclick="location.href='board-7.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A K 10 9 6</div><div class="bt-suit bt-heart">♥A Q 10</div><div class="bt-suit bt-diamond">♦Q</div><div class="bt-suit bt-club">♣J 6 5 4</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q J 3</div><div class="bt-suit bt-heart">♥7 3</div><div class="bt-suit bt-diamond">♦K J 7 6</div><div class="bt-suit bt-club">♣Q 9 8 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">7</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠7 4 2</div><div class="bt-suit bt-heart">♥K 6</div><div class="bt-suit bt-diamond">♦10 9 5 4 2</div><div class="bt-suit bt-club">♣A K 3</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠8 5</div><div class="bt-suit bt-heart">♥J 9 8 5 4 2</div><div class="bt-suit bt-diamond">♦A 8 3</div><div class="bt-suit bt-club">♣10 7</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 4♥S=  (620)</div>
+    </div>'><a href="board-7.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">7</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#FF0000;'>♥</span> G</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#0f8b61; font-weight:bold;">620</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">50</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">43</td></tr><tr class="tr-link" onclick="location.href='board-8.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A 10 9</div><div class="bt-suit bt-heart">♥K 9 8 7 6</div><div class="bt-suit bt-diamond">♦10</div><div class="bt-suit bt-club">♣A Q J 8</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 8 5 4 3</div><div class="bt-suit bt-heart">♥10</div><div class="bt-suit bt-diamond">♦K 9 3</div><div class="bt-suit bt-club">♣10 7 5 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">8</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠Q 2</div><div class="bt-suit bt-heart">♥A J 4 2</div><div class="bt-suit bt-diamond">♦J 8 7 4 2</div><div class="bt-suit bt-club">♣6 4</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠J 7 6</div><div class="bt-suit bt-heart">♥Q 5 3</div><div class="bt-suit bt-diamond">♦A Q 6 5</div><div class="bt-suit bt-club">♣K 9 3</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 4♥S=  (420)</div>
+    </div>'><a href="board-8.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">8</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#FF0000;'>♥</span> K</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#0f8b61; font-weight:bold;">420</td>
+                    <td style="color:#065f46; font-weight:bold; text-align:right;">75</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">47</td></tr><tr class="tr-link" onclick="location.href='board-9.html?pair=pair-E-W-7.html';"><td rowspan="4">4<br><span class='badge badge-ew'>DB</span></td><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A J 8 4</div><div class="bt-suit bt-heart">♥9 6</div><div class="bt-suit bt-diamond">♦6 5 3</div><div class="bt-suit bt-club">♣Q 9 6 5</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠6 3 2</div><div class="bt-suit bt-heart">♥K Q 10 8 3 2</div><div class="bt-suit bt-diamond">♦Q 9</div><div class="bt-suit bt-club">♣7 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">9</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠9 7 5</div><div class="bt-suit bt-heart">♥4</div><div class="bt-suit bt-diamond">♦J 8 7 4 2</div><div class="bt-suit bt-club">♣K J 8 3</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K Q 10</div><div class="bt-suit bt-heart">♥A J 7 5</div><div class="bt-suit bt-diamond">♦A K 10</div><div class="bt-suit bt-club">♣A 10 4</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 3NTS+1  (430)</div>
+    </div>'><a href="board-9.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">9</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3N G</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#b91c1c; font-weight:bold;">400</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">50</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">47</td><td rowspan="4" class="opponent-cell">
+                        <div class="rakip-names" style="color:#2563eb;"><span class="rakip-player">M. AKSOY</span><span class="rakip-tire">-</span><span class="rakip-player">Ö. YALÇINKAYA</span></div>
+                        <div class="rakip-score" style="color:#c2410c;">%31</div>
+                    </td></tr><tr class="tr-link" onclick="location.href='board-10.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠10 9 2</div><div class="bt-suit bt-heart">♥Q 5 3</div><div class="bt-suit bt-diamond">♦Q 7 4</div><div class="bt-suit bt-club">♣6 5 4 3</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠4</div><div class="bt-suit bt-heart">♥A J 10 9 8 4</div><div class="bt-suit bt-diamond">♦9 3</div><div class="bt-suit bt-club">♣A K Q 10</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">10</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠A K 8 3</div><div class="bt-suit bt-heart">♥K</div><div class="bt-suit bt-diamond">♦A J 10 8 2</div><div class="bt-suit bt-club">♣8 7 2</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q J 7 6 5</div><div class="bt-suit bt-heart">♥7 6 2</div><div class="bt-suit bt-diamond">♦K 6 5</div><div class="bt-suit bt-club">♣J 9</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 7♣W=  (-2140)</div>
+    </div>'><a href="board-10.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">10</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3N D</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">+3</td>
+                    <td style="color:#0f8b61; font-weight:bold;">-690</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">50</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">48</td></tr><tr class="tr-link" onclick="location.href='board-11.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 2</div><div class="bt-suit bt-heart">♥A J 9 8 5 2</div><div class="bt-suit bt-diamond">♦K 6 4</div><div class="bt-suit bt-club">♣J 6</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠7 4 3</div><div class="bt-suit bt-heart">♥Q 10 3</div><div class="bt-suit bt-diamond">♦J 9 2</div><div class="bt-suit bt-club">♣9 8 4 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">11</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠A Q J 10 9 8</div><div class="bt-suit bt-heart">♥K 7 4</div><div class="bt-suit bt-diamond">♦A 7 3</div><div class="bt-suit bt-club">♣K</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠6 5</div><div class="bt-suit bt-heart">♥6</div><div class="bt-suit bt-diamond">♦Q 10 8 5</div><div class="bt-suit bt-club">♣A Q 10 7 5 3</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 3♦N= / 3♣S=  (110)</div>
+    </div>'><a href="board-11.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">11</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#0000CD;'>♠</span> D</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">-3</td>
+                    <td style="color:#b91c1c; font-weight:bold;">150</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">00</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">43</td></tr><tr class="tr-link" onclick="location.href='board-12.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A 3</div><div class="bt-suit bt-heart">♥J 10 7</div><div class="bt-suit bt-diamond">♦6 4 3</div><div class="bt-suit bt-club">♣K 8 5 4 2</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠10 9 8 5</div><div class="bt-suit bt-heart">♥K 5 3</div><div class="bt-suit bt-diamond">♦K 7 2</div><div class="bt-suit bt-club">♣A J 10</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">12</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠K Q 6 2</div><div class="bt-suit bt-heart">♥Q 8 6</div><div class="bt-suit bt-diamond">♦A Q 5</div><div class="bt-suit bt-club">♣Q 9 6</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠J 7 4</div><div class="bt-suit bt-heart">♥A 9 4 2</div><div class="bt-suit bt-diamond">♦J 10 9 8</div><div class="bt-suit bt-club">♣7 3</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 3NTW=  (-400)</div>
+    </div>'><a href="board-12.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">12</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#0000CD;'>♠</span> D</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">-1</td>
+                    <td style="color:#b91c1c; font-weight:bold;">50</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">25</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">42</td></tr><tr class="tr-link" onclick="location.href='board-13.html?pair=pair-N-S-7.html';"><td rowspan="4">6<br><span class='badge badge-ns'>KG</span></td><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A Q 9 3</div><div class="bt-suit bt-heart">♥10 9 2</div><div class="bt-suit bt-diamond">♦Q 7 3</div><div class="bt-suit bt-club">♣K J 5</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 7</div><div class="bt-suit bt-heart">♥A 7 5</div><div class="bt-suit bt-diamond">♦10 8 6</div><div class="bt-suit bt-club">♣A Q 9 4 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">13</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠J 10 6 4 2</div><div class="bt-suit bt-heart">♥K 8 6 3</div><div class="bt-suit bt-diamond">♦A 9 4</div><div class="bt-suit bt-club">♣7</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠8 5</div><div class="bt-suit bt-heart">♥Q J 4</div><div class="bt-suit bt-diamond">♦K J 5 2</div><div class="bt-suit bt-club">♣10 8 6 3</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 1NTS=  (90)</div>
+    </div>'><a href="board-13.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">13</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">2<span style='color:#FF0000;'>♥</span> D</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#b91c1c; font-weight:bold;">-110</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">00</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">38</td><td rowspan="4" class="opponent-cell">
+                        <div class="rakip-names" style="color:#2563eb;"><span class="rakip-player">O. GÜNEŞ</span><span class="rakip-tire">-</span><span class="rakip-player">N. KALEMCİ</span></div>
+                        <div class="rakip-score" style="color:#b91c1c;">%12</div>
+                    </td></tr><tr class="tr-link" onclick="location.href='board-14.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A 7 6 4 3</div><div class="bt-suit bt-heart">♥3</div><div class="bt-suit bt-diamond">♦Q 2</div><div class="bt-suit bt-club">♣A K Q 10 8</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q J 5</div><div class="bt-suit bt-heart">♥A K J 8 7 5</div><div class="bt-suit bt-diamond">♦J</div><div class="bt-suit bt-club">♣J 6 3</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">14</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠K 9 2</div><div class="bt-suit bt-heart">♥10 6</div><div class="bt-suit bt-diamond">♦A 10 9 7 6 5 4</div><div class="bt-suit bt-club">♣7</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠10 8</div><div class="bt-suit bt-heart">♥Q 9 4 2</div><div class="bt-suit bt-diamond">♦K 8 3</div><div class="bt-suit bt-club">♣9 5 4 2</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 3♠Sx-1 / 4♣Sx-1  (-100)</div>
+    </div>'><a href="board-14.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">14</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3<span style='color:#FF0000;'>♥</span>X B</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#b91c1c; font-weight:bold;">-530</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">00</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">36</td></tr><tr class="tr-link" onclick="location.href='board-15.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A Q 7 2</div><div class="bt-suit bt-heart">♥6 4</div><div class="bt-suit bt-diamond">♦A K 8 7</div><div class="bt-suit bt-club">♣A 9 5</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠6</div><div class="bt-suit bt-heart">♥K 9 8 7 2</div><div class="bt-suit bt-diamond">♦J 10 4 3</div><div class="bt-suit bt-club">♣6 4 3</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">15</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠K J 10 8 5</div><div class="bt-suit bt-heart">♥Q J 10</div><div class="bt-suit bt-diamond">♦9</div><div class="bt-suit bt-club">♣K 10 7 2</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠9 4 3</div><div class="bt-suit bt-heart">♥A 5 3</div><div class="bt-suit bt-diamond">♦Q 6 5 2</div><div class="bt-suit bt-club">♣Q J 8</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 2NTS=  (120)</div>
+    </div>'><a href="board-15.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">15</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3N G</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">-1</td>
+                    <td style="color:#b91c1c; font-weight:bold;">-100</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">25</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">35</td></tr><tr class="tr-link" onclick="location.href='board-16.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠9 4 2</div><div class="bt-suit bt-heart">♥A 9 8 5 2</div><div class="bt-suit bt-diamond">♦8 4 3</div><div class="bt-suit bt-club">♣7 5</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠8 5</div><div class="bt-suit bt-heart">♥10 6 4 3</div><div class="bt-suit bt-diamond">♦Q J 2</div><div class="bt-suit bt-club">♣10 9 8 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">16</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠K J 7 6 3</div><div class="bt-suit bt-heart">♥K</div><div class="bt-suit bt-diamond">♦A K 7</div><div class="bt-suit bt-club">♣A 6 4 3</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A Q 10</div><div class="bt-suit bt-heart">♥Q J 7</div><div class="bt-suit bt-diamond">♦10 9 6 5</div><div class="bt-suit bt-club">♣K Q J</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 1NTS+1  (120)</div>
+    </div>'><a href="board-16.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">16</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">2<span style='color:#FF0000;'>♥</span> K</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#0f8b61; font-weight:bold;">110</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">25</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">34</td></tr><tr class="tr-link" onclick="location.href='board-17.html?pair=pair-E-W-7.html';"><td rowspan="4">2<br><span class='badge badge-ew'>DB</span></td><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K Q 10 9 3</div><div class="bt-suit bt-heart">♥Q 9</div><div class="bt-suit bt-diamond">♦6 5</div><div class="bt-suit bt-club">♣Q 9 8 5</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A 4</div><div class="bt-suit bt-heart">♥A J 6 4 3</div><div class="bt-suit bt-diamond">♦A Q 10 9</div><div class="bt-suit bt-club">♣7 6</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">17</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠J 6 2</div><div class="bt-suit bt-heart">♥K 10 5 2</div><div class="bt-suit bt-diamond">♦J 4 3</div><div class="bt-suit bt-club">♣10 4 3</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠8 7 5</div><div class="bt-suit bt-heart">♥8 7</div><div class="bt-suit bt-diamond">♦K 8 7 2</div><div class="bt-suit bt-club">♣A K J 2</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 4♥W=  (-420)</div>
+    </div>'><a href="board-17.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">17</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#FF0000;'>♥</span> B</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#0f8b61; font-weight:bold;">-420</td>
+                    <td style="color:#065f46; font-weight:bold; text-align:right;">100</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">38</td><td rowspan="4" class="opponent-cell">
+                        <div class="rakip-names" style="color:#2563eb;"><span class="rakip-player">Ö.F. GÜLDER</span><span class="rakip-tire">-</span><span class="rakip-player">O. AYDOS</span></div>
+                        <div class="rakip-score" style="color:#065f46;">%81</div>
+                    </td></tr><tr class="tr-link" onclick="location.href='board-18.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠J 10 8 6</div><div class="bt-suit bt-heart">♥8</div><div class="bt-suit bt-diamond">♦10 7 6 4 3</div><div class="bt-suit bt-club">♣K 8 5</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A 7 5 4 3 2</div><div class="bt-suit bt-heart">♥K 6</div><div class="bt-suit bt-diamond">♦A Q 9 2</div><div class="bt-suit bt-club">♣Q</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">18</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠Q 9</div><div class="bt-suit bt-heart">♥A Q 7</div><div class="bt-suit bt-diamond">♦K J 8 5</div><div class="bt-suit bt-club">♣A J 4 3</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K</div><div class="bt-suit bt-heart">♥J 10 9 5 4 3 2</div><div class="bt-suit bt-diamond">♦-</div><div class="bt-suit bt-club">♣10 9 7 6 2</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 6♦W=  (-920)</div>
+    </div>'><a href="board-18.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">18</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3N D</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">+1</td>
+                    <td style="color:#0f8b61; font-weight:bold;">-430</td>
+                    <td style="color:#065f46; font-weight:bold; text-align:right;">100</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">42</td></tr><tr class="tr-link" onclick="location.href='board-19.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q J 10 9 8 2</div><div class="bt-suit bt-heart">♥A K Q 9 7</div><div class="bt-suit bt-diamond">♦2</div><div class="bt-suit bt-club">♣10</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠3</div><div class="bt-suit bt-heart">♥10 2</div><div class="bt-suit bt-diamond">♦J 5 4 3</div><div class="bt-suit bt-club">♣K Q J 8 4 3</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">19</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠A 7 5</div><div class="bt-suit bt-heart">♥J 6 5</div><div class="bt-suit bt-diamond">♦A Q 7 6</div><div class="bt-suit bt-club">♣7 6 5</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 6 4</div><div class="bt-suit bt-heart">♥8 4 3</div><div class="bt-suit bt-diamond">♦K 10 9 8</div><div class="bt-suit bt-club">♣A 9 2</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 4♠S+1  (450)</div>
+    </div>'><a href="board-19.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">19</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#0000CD;'>♠</span> K</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">+1</td>
+                    <td style="color:#b91c1c; font-weight:bold;">450</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">25</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">41</td></tr><tr class="tr-link" onclick="location.href='board-20.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠J 7 5</div><div class="bt-suit bt-heart">♥9 4 3</div><div class="bt-suit bt-diamond">♦K J 9 8 2</div><div class="bt-suit bt-club">♣J 9</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠9 4 2</div><div class="bt-suit bt-heart">♥A 8 5 2</div><div class="bt-suit bt-diamond">♦7 3</div><div class="bt-suit bt-club">♣A 10 8 3</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">20</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠K 10 8 6</div><div class="bt-suit bt-heart">♥K J 10 7</div><div class="bt-suit bt-diamond">♦A 10 6</div><div class="bt-suit bt-club">♣7 6</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A Q 3</div><div class="bt-suit bt-heart">♥Q 6</div><div class="bt-suit bt-diamond">♦Q 5 4</div><div class="bt-suit bt-club">♣K Q 5 4 2</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 2♥W+1  (-140)</div>
+    </div>'><a href="board-20.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">20</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">1N G</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#b91c1c; font-weight:bold;">90</td>
+                    <td style="color:#065f46; font-weight:bold; text-align:right;">100</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">44</td></tr><tr class="tr-link" onclick="location.href='board-21.html?pair=pair-E-W-7.html';"><td rowspan="4">1<br><span class='badge badge-ew'>DB</span></td><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠9 7 6</div><div class="bt-suit bt-heart">♥A 7 3</div><div class="bt-suit bt-diamond">♦J 9 6 2</div><div class="bt-suit bt-club">♣K 9 6</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A J 5 2</div><div class="bt-suit bt-heart">♥Q 10</div><div class="bt-suit bt-diamond">♦K 10 5 4</div><div class="bt-suit bt-club">♣A J 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">21</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠Q 10 8 4 3</div><div class="bt-suit bt-heart">♥5 4</div><div class="bt-suit bt-diamond">♦Q 8 7</div><div class="bt-suit bt-club">♣8 7 5</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K</div><div class="bt-suit bt-heart">♥K J 9 8 6 2</div><div class="bt-suit bt-diamond">♦A 3</div><div class="bt-suit bt-club">♣Q 10 4 3</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 4♠Wx-2  (300)</div>
+    </div>'><a href="board-21.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">21</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#FF0000;'>♥</span> G</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#b91c1c; font-weight:bold;">620</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">00</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">42</td><td rowspan="4" class="opponent-cell">
+                        <div class="rakip-names" style="color:#2563eb;"><span class="rakip-player">D. TUNÇBİLEK</span><span class="rakip-tire">-</span><span class="rakip-player">Ö. TEMİZER</span></div>
+                        <div class="rakip-score" style="color:#b91c1c;">%19</div>
+                    </td></tr><tr class="tr-link" onclick="location.href='board-22.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A 10 9 6 2</div><div class="bt-suit bt-heart">♥7 4</div><div class="bt-suit bt-diamond">♦7 3</div><div class="bt-suit bt-club">♣A K J 3</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K Q 8 3</div><div class="bt-suit bt-heart">♥K J 9 8</div><div class="bt-suit bt-diamond">♦K J 6</div><div class="bt-suit bt-club">♣Q 7</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">22</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠J 7 4</div><div class="bt-suit bt-heart">♥Q 6 2</div><div class="bt-suit bt-diamond">♦A Q 2</div><div class="bt-suit bt-club">♣9 8 4 2</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠5</div><div class="bt-suit bt-heart">♥A 10 5 3</div><div class="bt-suit bt-diamond">♦10 9 8 5 4</div><div class="bt-suit bt-club">♣10 6 5</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 1NTW=  (-90)</div>
+    </div>'><a href="board-22.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">22</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3NX D</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">-1</td>
+                    <td style="color:#b91c1c; font-weight:bold;">200</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">00</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">40</td></tr><tr class="tr-link" onclick="location.href='board-23.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A K 7 5</div><div class="bt-suit bt-heart">♥A K 9 8 4</div><div class="bt-suit bt-diamond">♦A</div><div class="bt-suit bt-club">♣Q J 7</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠8 6 4 3</div><div class="bt-suit bt-heart">♥-</div><div class="bt-suit bt-diamond">♦K Q 10 9 5 2</div><div class="bt-suit bt-club">♣10 8 3</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">23</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠J 9 2</div><div class="bt-suit bt-heart">♥J 6 5</div><div class="bt-suit bt-diamond">♦J 4 3</div><div class="bt-suit bt-club">♣K 6 4 2</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q 10</div><div class="bt-suit bt-heart">♥Q 10 7 3 2</div><div class="bt-suit bt-diamond">♦8 7 6</div><div class="bt-suit bt-club">♣A 9 5</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 7♥S=  (2210)</div>
+    </div>'><a href="board-23.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">23</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">6NX K</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#b91c1c; font-weight:bold;">1680</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">00</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">38</td></tr><tr class="tr-link" onclick="location.href='board-24.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q</div><div class="bt-suit bt-heart">♥A J 7 4 3</div><div class="bt-suit bt-diamond">♦A J 8 7 4</div><div class="bt-suit bt-club">♣A K</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠-</div><div class="bt-suit bt-heart">♥K 8 6 5 2</div><div class="bt-suit bt-diamond">♦K 10 9 6 2</div><div class="bt-suit bt-club">♣Q J 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">24</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠A K 9 8 7 6 5 4</div><div class="bt-suit bt-heart">♥10 9</div><div class="bt-suit bt-diamond">♦-</div><div class="bt-suit bt-club">♣10 7 3</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠J 10 3 2</div><div class="bt-suit bt-heart">♥Q</div><div class="bt-suit bt-diamond">♦Q 5 3</div><div class="bt-suit bt-club">♣9 8 6 5 4</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 3♦S+1  (130)</div>
+    </div>'><a href="board-24.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">24</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#0000CD;'>♠</span>X D</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">-3</td>
+                    <td style="color:#b91c1c; font-weight:bold;">500</td>
+                    <td style="color:#065f46; font-weight:bold; text-align:right;">75</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">40</td></tr></tbody></table></div>
+    <div id="view-round" style="display:block;"><table class="match-table"><thead><tr><th>Tur<br>Yön</th><th class="bord-th">B</th><th style="text-align:left;">Kontrat</th><th>Atak</th><th>+-</th><th>Skor<br>KG</th><th>Bord<br>%</th><th>Canlı<br>%</th><th>Rakip<br>%</th></tr></thead><tbody><tr class="tr-link" onclick="location.href='board-21.html?pair=pair-E-W-7.html';"><td rowspan="4">1<br><span class='badge badge-ew'>DB</span></td><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠9 7 6</div><div class="bt-suit bt-heart">♥A 7 3</div><div class="bt-suit bt-diamond">♦J 9 6 2</div><div class="bt-suit bt-club">♣K 9 6</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A J 5 2</div><div class="bt-suit bt-heart">♥Q 10</div><div class="bt-suit bt-diamond">♦K 10 5 4</div><div class="bt-suit bt-club">♣A J 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">21</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠Q 10 8 4 3</div><div class="bt-suit bt-heart">♥5 4</div><div class="bt-suit bt-diamond">♦Q 8 7</div><div class="bt-suit bt-club">♣8 7 5</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K</div><div class="bt-suit bt-heart">♥K J 9 8 6 2</div><div class="bt-suit bt-diamond">♦A 3</div><div class="bt-suit bt-club">♣Q 10 4 3</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 4♠Wx-2  (300)</div>
+    </div>'><a href="board-21.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">21</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#FF0000;'>♥</span> G</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#b91c1c; font-weight:bold;">620</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">00</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">00</td><td rowspan="4" class="opponent-cell">
+                        <div class="rakip-names" style="color:#2563eb;"><span class="rakip-player">D. TUNÇBİLEK</span><span class="rakip-tire">-</span><span class="rakip-player">Ö. TEMİZER</span></div>
+                        <div class="rakip-score" style="color:#b91c1c;">%19</div>
+                    </td></tr><tr class="tr-link" onclick="location.href='board-22.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A 10 9 6 2</div><div class="bt-suit bt-heart">♥7 4</div><div class="bt-suit bt-diamond">♦7 3</div><div class="bt-suit bt-club">♣A K J 3</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K Q 8 3</div><div class="bt-suit bt-heart">♥K J 9 8</div><div class="bt-suit bt-diamond">♦K J 6</div><div class="bt-suit bt-club">♣Q 7</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">22</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠J 7 4</div><div class="bt-suit bt-heart">♥Q 6 2</div><div class="bt-suit bt-diamond">♦A Q 2</div><div class="bt-suit bt-club">♣9 8 4 2</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠5</div><div class="bt-suit bt-heart">♥A 10 5 3</div><div class="bt-suit bt-diamond">♦10 9 8 5 4</div><div class="bt-suit bt-club">♣10 6 5</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 1NTW=  (-90)</div>
+    </div>'><a href="board-22.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">22</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3NX D</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">-1</td>
+                    <td style="color:#b91c1c; font-weight:bold;">200</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">00</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">00</td></tr><tr class="tr-link" onclick="location.href='board-23.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A K 7 5</div><div class="bt-suit bt-heart">♥A K 9 8 4</div><div class="bt-suit bt-diamond">♦A</div><div class="bt-suit bt-club">♣Q J 7</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠8 6 4 3</div><div class="bt-suit bt-heart">♥-</div><div class="bt-suit bt-diamond">♦K Q 10 9 5 2</div><div class="bt-suit bt-club">♣10 8 3</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">23</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠J 9 2</div><div class="bt-suit bt-heart">♥J 6 5</div><div class="bt-suit bt-diamond">♦J 4 3</div><div class="bt-suit bt-club">♣K 6 4 2</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q 10</div><div class="bt-suit bt-heart">♥Q 10 7 3 2</div><div class="bt-suit bt-diamond">♦8 7 6</div><div class="bt-suit bt-club">♣A 9 5</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 7♥S=  (2210)</div>
+    </div>'><a href="board-23.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">23</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">6NX K</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#b91c1c; font-weight:bold;">1680</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">00</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">00</td></tr><tr class="tr-link" onclick="location.href='board-24.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q</div><div class="bt-suit bt-heart">♥A J 7 4 3</div><div class="bt-suit bt-diamond">♦A J 8 7 4</div><div class="bt-suit bt-club">♣A K</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠-</div><div class="bt-suit bt-heart">♥K 8 6 5 2</div><div class="bt-suit bt-diamond">♦K 10 9 6 2</div><div class="bt-suit bt-club">♣Q J 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">24</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠A K 9 8 7 6 5 4</div><div class="bt-suit bt-heart">♥10 9</div><div class="bt-suit bt-diamond">♦-</div><div class="bt-suit bt-club">♣10 7 3</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠J 10 3 2</div><div class="bt-suit bt-heart">♥Q</div><div class="bt-suit bt-diamond">♦Q 5 3</div><div class="bt-suit bt-club">♣9 8 6 5 4</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 3♦S+1  (130)</div>
+    </div>'><a href="board-24.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">24</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#0000CD;'>♠</span>X D</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">-3</td>
+                    <td style="color:#b91c1c; font-weight:bold;">500</td>
+                    <td style="color:#065f46; font-weight:bold; text-align:right;">75</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">19</td></tr><tr class="tr-link" onclick="location.href='board-17.html?pair=pair-E-W-7.html';"><td rowspan="4">2<br><span class='badge badge-ew'>DB</span></td><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K Q 10 9 3</div><div class="bt-suit bt-heart">♥Q 9</div><div class="bt-suit bt-diamond">♦6 5</div><div class="bt-suit bt-club">♣Q 9 8 5</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A 4</div><div class="bt-suit bt-heart">♥A J 6 4 3</div><div class="bt-suit bt-diamond">♦A Q 10 9</div><div class="bt-suit bt-club">♣7 6</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">17</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠J 6 2</div><div class="bt-suit bt-heart">♥K 10 5 2</div><div class="bt-suit bt-diamond">♦J 4 3</div><div class="bt-suit bt-club">♣10 4 3</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠8 7 5</div><div class="bt-suit bt-heart">♥8 7</div><div class="bt-suit bt-diamond">♦K 8 7 2</div><div class="bt-suit bt-club">♣A K J 2</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 4♥W=  (-420)</div>
+    </div>'><a href="board-17.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">17</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#FF0000;'>♥</span> B</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#0f8b61; font-weight:bold;">-420</td>
+                    <td style="color:#065f46; font-weight:bold; text-align:right;">100</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">35</td><td rowspan="4" class="opponent-cell">
+                        <div class="rakip-names" style="color:#2563eb;"><span class="rakip-player">Ö.F. GÜLDER</span><span class="rakip-tire">-</span><span class="rakip-player">O. AYDOS</span></div>
+                        <div class="rakip-score" style="color:#065f46;">%81</div>
+                    </td></tr><tr class="tr-link" onclick="location.href='board-18.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠J 10 8 6</div><div class="bt-suit bt-heart">♥8</div><div class="bt-suit bt-diamond">♦10 7 6 4 3</div><div class="bt-suit bt-club">♣K 8 5</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A 7 5 4 3 2</div><div class="bt-suit bt-heart">♥K 6</div><div class="bt-suit bt-diamond">♦A Q 9 2</div><div class="bt-suit bt-club">♣Q</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">18</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠Q 9</div><div class="bt-suit bt-heart">♥A Q 7</div><div class="bt-suit bt-diamond">♦K J 8 5</div><div class="bt-suit bt-club">♣A J 4 3</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K</div><div class="bt-suit bt-heart">♥J 10 9 5 4 3 2</div><div class="bt-suit bt-diamond">♦-</div><div class="bt-suit bt-club">♣10 9 7 6 2</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 6♦W=  (-920)</div>
+    </div>'><a href="board-18.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">18</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3N D</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">+1</td>
+                    <td style="color:#0f8b61; font-weight:bold;">-430</td>
+                    <td style="color:#065f46; font-weight:bold; text-align:right;">100</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">46</td></tr><tr class="tr-link" onclick="location.href='board-19.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q J 10 9 8 2</div><div class="bt-suit bt-heart">♥A K Q 9 7</div><div class="bt-suit bt-diamond">♦2</div><div class="bt-suit bt-club">♣10</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠3</div><div class="bt-suit bt-heart">♥10 2</div><div class="bt-suit bt-diamond">♦J 5 4 3</div><div class="bt-suit bt-club">♣K Q J 8 4 3</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">19</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠A 7 5</div><div class="bt-suit bt-heart">♥J 6 5</div><div class="bt-suit bt-diamond">♦A Q 7 6</div><div class="bt-suit bt-club">♣7 6 5</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 6 4</div><div class="bt-suit bt-heart">♥8 4 3</div><div class="bt-suit bt-diamond">♦K 10 9 8</div><div class="bt-suit bt-club">♣A 9 2</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 4♠S+1  (450)</div>
+    </div>'><a href="board-19.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">19</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#0000CD;'>♠</span> K</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">+1</td>
+                    <td style="color:#b91c1c; font-weight:bold;">450</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">25</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">43</td></tr><tr class="tr-link" onclick="location.href='board-20.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠J 7 5</div><div class="bt-suit bt-heart">♥9 4 3</div><div class="bt-suit bt-diamond">♦K J 9 8 2</div><div class="bt-suit bt-club">♣J 9</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠9 4 2</div><div class="bt-suit bt-heart">♥A 8 5 2</div><div class="bt-suit bt-diamond">♦7 3</div><div class="bt-suit bt-club">♣A 10 8 3</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">20</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠K 10 8 6</div><div class="bt-suit bt-heart">♥K J 10 7</div><div class="bt-suit bt-diamond">♦A 10 6</div><div class="bt-suit bt-club">♣7 6</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A Q 3</div><div class="bt-suit bt-heart">♥Q 6</div><div class="bt-suit bt-diamond">♦Q 5 4</div><div class="bt-suit bt-club">♣K Q 5 4 2</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 2♥W+1  (-140)</div>
+    </div>'><a href="board-20.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">20</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">1N G</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#b91c1c; font-weight:bold;">90</td>
+                    <td style="color:#065f46; font-weight:bold; text-align:right;">100</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">50</td></tr><tr class="tr-link" onclick="location.href='board-5.html?pair=pair-N-S-7.html';"><td rowspan="4">3<br><span class='badge badge-ns'>KG</span></td><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q J 9</div><div class="bt-suit bt-heart">♥K 7 3</div><div class="bt-suit bt-diamond">♦A 8 5</div><div class="bt-suit bt-club">♣K 9 8 7</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A 10 8</div><div class="bt-suit bt-heart">♥A 8</div><div class="bt-suit bt-diamond">♦10 9 4</div><div class="bt-suit bt-club">♣10 6 4 3 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">5</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠7 4</div><div class="bt-suit bt-heart">♥J 6 5 4</div><div class="bt-suit bt-diamond">♦K Q J 7 6 2</div><div class="bt-suit bt-club">♣J</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 6 5 3 2</div><div class="bt-suit bt-heart">♥Q 10 9 2</div><div class="bt-suit bt-diamond">♦3</div><div class="bt-suit bt-club">♣A Q 5</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 4♠S=  (620)</div>
+    </div>'><a href="board-5.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">5</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#0000CD;'>♠</span> G</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">+1</td>
+                    <td style="color:#0f8b61; font-weight:bold;">650</td>
+                    <td style="color:#065f46; font-weight:bold; text-align:right;">75</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">53</td><td rowspan="4" class="opponent-cell">
+                        <div class="rakip-names" style="color:#2563eb;"><span class="rakip-player">N. KOSOVAERİ</span><span class="rakip-tire">-</span><span class="rakip-player">S.Y. ŞİMŞEK</span></div>
+                        <div class="rakip-score" style="color:#1e40af;">%50</div>
+                    </td></tr><tr class="tr-link" onclick="location.href='board-6.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q 9 6</div><div class="bt-suit bt-heart">♥10 6 5 2</div><div class="bt-suit bt-diamond">♦A 7 3</div><div class="bt-suit bt-club">♣10 9 5</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 4 2</div><div class="bt-suit bt-heart">♥J 9</div><div class="bt-suit bt-diamond">♦K Q J 8 2</div><div class="bt-suit bt-club">♣J 6 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">6</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠A 8 7</div><div class="bt-suit bt-heart">♥A Q 7</div><div class="bt-suit bt-diamond">♦10 9 5</div><div class="bt-suit bt-club">♣A K 8 7</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠J 10 5 3</div><div class="bt-suit bt-heart">♥K 8 4 3</div><div class="bt-suit bt-diamond">♦6 4</div><div class="bt-suit bt-club">♣Q 4 3</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 3NTW+1  (-630)</div>
+    </div>'><a href="board-6.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">6</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3N D</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">+1</td>
+                    <td style="color:#b91c1c; font-weight:bold;">-630</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">00</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">48</td></tr><tr class="tr-link" onclick="location.href='board-7.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A K 10 9 6</div><div class="bt-suit bt-heart">♥A Q 10</div><div class="bt-suit bt-diamond">♦Q</div><div class="bt-suit bt-club">♣J 6 5 4</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q J 3</div><div class="bt-suit bt-heart">♥7 3</div><div class="bt-suit bt-diamond">♦K J 7 6</div><div class="bt-suit bt-club">♣Q 9 8 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">7</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠7 4 2</div><div class="bt-suit bt-heart">♥K 6</div><div class="bt-suit bt-diamond">♦10 9 5 4 2</div><div class="bt-suit bt-club">♣A K 3</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠8 5</div><div class="bt-suit bt-heart">♥J 9 8 5 4 2</div><div class="bt-suit bt-diamond">♦A 8 3</div><div class="bt-suit bt-club">♣10 7</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 4♥S=  (620)</div>
+    </div>'><a href="board-7.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">7</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#FF0000;'>♥</span> G</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#0f8b61; font-weight:bold;">620</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">50</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">48</td></tr><tr class="tr-link" onclick="location.href='board-8.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A 10 9</div><div class="bt-suit bt-heart">♥K 9 8 7 6</div><div class="bt-suit bt-diamond">♦10</div><div class="bt-suit bt-club">♣A Q J 8</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 8 5 4 3</div><div class="bt-suit bt-heart">♥10</div><div class="bt-suit bt-diamond">♦K 9 3</div><div class="bt-suit bt-club">♣10 7 5 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">8</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠Q 2</div><div class="bt-suit bt-heart">♥A J 4 2</div><div class="bt-suit bt-diamond">♦J 8 7 4 2</div><div class="bt-suit bt-club">♣6 4</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠J 7 6</div><div class="bt-suit bt-heart">♥Q 5 3</div><div class="bt-suit bt-diamond">♦A Q 6 5</div><div class="bt-suit bt-club">♣K 9 3</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 4♥S=  (420)</div>
+    </div>'><a href="board-8.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">8</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#FF0000;'>♥</span> K</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#0f8b61; font-weight:bold;">420</td>
+                    <td style="color:#065f46; font-weight:bold; text-align:right;">75</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">50</td></tr><tr class="tr-link" onclick="location.href='board-9.html?pair=pair-E-W-7.html';"><td rowspan="4">4<br><span class='badge badge-ew'>DB</span></td><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A J 8 4</div><div class="bt-suit bt-heart">♥9 6</div><div class="bt-suit bt-diamond">♦6 5 3</div><div class="bt-suit bt-club">♣Q 9 6 5</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠6 3 2</div><div class="bt-suit bt-heart">♥K Q 10 8 3 2</div><div class="bt-suit bt-diamond">♦Q 9</div><div class="bt-suit bt-club">♣7 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">9</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠9 7 5</div><div class="bt-suit bt-heart">♥4</div><div class="bt-suit bt-diamond">♦J 8 7 4 2</div><div class="bt-suit bt-club">♣K J 8 3</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K Q 10</div><div class="bt-suit bt-heart">♥A J 7 5</div><div class="bt-suit bt-diamond">♦A K 10</div><div class="bt-suit bt-club">♣A 10 4</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 3NTS+1  (430)</div>
+    </div>'><a href="board-9.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">9</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3N G</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#b91c1c; font-weight:bold;">400</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">50</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">50</td><td rowspan="4" class="opponent-cell">
+                        <div class="rakip-names" style="color:#2563eb;"><span class="rakip-player">M. AKSOY</span><span class="rakip-tire">-</span><span class="rakip-player">Ö. YALÇINKAYA</span></div>
+                        <div class="rakip-score" style="color:#c2410c;">%31</div>
+                    </td></tr><tr class="tr-link" onclick="location.href='board-10.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠10 9 2</div><div class="bt-suit bt-heart">♥Q 5 3</div><div class="bt-suit bt-diamond">♦Q 7 4</div><div class="bt-suit bt-club">♣6 5 4 3</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠4</div><div class="bt-suit bt-heart">♥A J 10 9 8 4</div><div class="bt-suit bt-diamond">♦9 3</div><div class="bt-suit bt-club">♣A K Q 10</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">10</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠A K 8 3</div><div class="bt-suit bt-heart">♥K</div><div class="bt-suit bt-diamond">♦A J 10 8 2</div><div class="bt-suit bt-club">♣8 7 2</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q J 7 6 5</div><div class="bt-suit bt-heart">♥7 6 2</div><div class="bt-suit bt-diamond">♦K 6 5</div><div class="bt-suit bt-club">♣J 9</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 7♣W=  (-2140)</div>
+    </div>'><a href="board-10.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">10</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3N D</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">+3</td>
+                    <td style="color:#0f8b61; font-weight:bold;">-690</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">50</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">50</td></tr><tr class="tr-link" onclick="location.href='board-11.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 2</div><div class="bt-suit bt-heart">♥A J 9 8 5 2</div><div class="bt-suit bt-diamond">♦K 6 4</div><div class="bt-suit bt-club">♣J 6</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠7 4 3</div><div class="bt-suit bt-heart">♥Q 10 3</div><div class="bt-suit bt-diamond">♦J 9 2</div><div class="bt-suit bt-club">♣9 8 4 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">11</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠A Q J 10 9 8</div><div class="bt-suit bt-heart">♥K 7 4</div><div class="bt-suit bt-diamond">♦A 7 3</div><div class="bt-suit bt-club">♣K</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠6 5</div><div class="bt-suit bt-heart">♥6</div><div class="bt-suit bt-diamond">♦Q 10 8 5</div><div class="bt-suit bt-club">♣A Q 10 7 5 3</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 3♦N= / 3♣S=  (110)</div>
+    </div>'><a href="board-11.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">11</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#0000CD;'>♠</span> D</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">-3</td>
+                    <td style="color:#b91c1c; font-weight:bold;">150</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">00</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">47</td></tr><tr class="tr-link" onclick="location.href='board-12.html?pair=pair-E-W-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A 3</div><div class="bt-suit bt-heart">♥J 10 7</div><div class="bt-suit bt-diamond">♦6 4 3</div><div class="bt-suit bt-club">♣K 8 5 4 2</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠10 9 8 5</div><div class="bt-suit bt-heart">♥K 5 3</div><div class="bt-suit bt-diamond">♦K 7 2</div><div class="bt-suit bt-club">♣A J 10</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">12</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠K Q 6 2</div><div class="bt-suit bt-heart">♥Q 8 6</div><div class="bt-suit bt-diamond">♦A Q 5</div><div class="bt-suit bt-club">♣Q 9 6</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠J 7 4</div><div class="bt-suit bt-heart">♥A 9 4 2</div><div class="bt-suit bt-diamond">♦J 10 9 8</div><div class="bt-suit bt-club">♣7 3</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 3NTW=  (-400)</div>
+    </div>'><a href="board-12.html?pair=pair-E-W-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">12</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#0000CD;'>♠</span> D</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">-1</td>
+                    <td style="color:#b91c1c; font-weight:bold;">50</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">25</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">45</td></tr><tr class="tr-link" onclick="location.href='board-1.html?pair=pair-N-S-7.html';"><td rowspan="4">5<br><span class='badge badge-ns'>KG</span></td><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 6 5</div><div class="bt-suit bt-heart">♥8 5</div><div class="bt-suit bt-diamond">♦K Q 7 5 2</div><div class="bt-suit bt-club">♣A 5 3</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A Q 9 3</div><div class="bt-suit bt-heart">♥A J 9 3</div><div class="bt-suit bt-diamond">♦A 3</div><div class="bt-suit bt-club">♣K 7 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">1</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠J 10 8 4 2</div><div class="bt-suit bt-heart">♥Q 10 6 4</div><div class="bt-suit bt-diamond">♦9 8 4</div><div class="bt-suit bt-club">♣10</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠7</div><div class="bt-suit bt-heart">♥K 7 2</div><div class="bt-suit bt-diamond">♦J 10 6</div><div class="bt-suit bt-club">♣Q J 9 8 6 4</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 5♣Sx-2  (-300)</div>
+    </div>'><a href="board-1.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">1</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#0000CD;'>♠</span> B</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#b91c1c; font-weight:bold;">-420</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">25</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">44</td><td rowspan="4" class="opponent-cell">
+                        <div class="rakip-names" style="color:#2563eb;"><span class="rakip-player">Y. DOĞAN</span><span class="rakip-tire">-</span><span class="rakip-player">N. ŞANAY</span></div>
+                        <div class="rakip-score" style="color:#1e40af;">%44</div>
+                    </td></tr><tr class="tr-link" onclick="location.href='board-2.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 6</div><div class="bt-suit bt-heart">♥Q J 8</div><div class="bt-suit bt-diamond">♦Q 9 7 3</div><div class="bt-suit bt-club">♣9 7 6 4</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠J 8 5 4 3</div><div class="bt-suit bt-heart">♥A 7 5 3</div><div class="bt-suit bt-diamond">♦A J</div><div class="bt-suit bt-club">♣5 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">2</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠A 9 7</div><div class="bt-suit bt-heart">♥10 2</div><div class="bt-suit bt-diamond">♦10 6 5 4 2</div><div class="bt-suit bt-club">♣A Q 3</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q 10 2</div><div class="bt-suit bt-heart">♥K 9 6 4</div><div class="bt-suit bt-diamond">♦K 8</div><div class="bt-suit bt-club">♣K J 10 8</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] D-B: 2♠W=  (-110)</div>
+    </div>'><a href="board-2.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">2</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3<span style='color:#0000CD;'>♠</span> B</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">-1</td>
+                    <td style="color:#0f8b61; font-weight:bold;">50</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">50</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">44</td></tr><tr class="tr-link" onclick="location.href='board-3.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠J 5 3</div><div class="bt-suit bt-heart">♥K Q 9 8</div><div class="bt-suit bt-diamond">♦J 10 6 3</div><div class="bt-suit bt-club">♣8 5</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 9 8 7 4</div><div class="bt-suit bt-heart">♥6 5 3</div><div class="bt-suit bt-diamond">♦8 4</div><div class="bt-suit bt-club">♣A K 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">3</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠10 6</div><div class="bt-suit bt-heart">♥A J 10 7</div><div class="bt-suit bt-diamond">♦A Q 9</div><div class="bt-suit bt-club">♣J 10 9 3</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A Q 2</div><div class="bt-suit bt-heart">♥4 2</div><div class="bt-suit bt-diamond">♦K 7 5 2</div><div class="bt-suit bt-club">♣Q 7 6 4</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 4♦Nx-3  (-500)</div>
+    </div>'><a href="board-3.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">3</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">4<span style='color:#FE7210;'>♦</span> G</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">-2</td>
+                    <td style="color:#b91c1c; font-weight:bold;">-100</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">50</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">45</td></tr><tr class="tr-link" onclick="location.href='board-4.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q J 10</div><div class="bt-suit bt-heart">♥A K Q 10</div><div class="bt-suit bt-diamond">♦A K 10 8 2</div><div class="bt-suit bt-club">♣3</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠5 4 3</div><div class="bt-suit bt-heart">♥7</div><div class="bt-suit bt-diamond">♦Q 9 7 6 5</div><div class="bt-suit bt-club">♣K 10 9 6</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">4</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠A K 9 6 2</div><div class="bt-suit bt-heart">♥J 9 8 5</div><div class="bt-suit bt-diamond">♦3</div><div class="bt-suit bt-club">♣8 7 4</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠8 7</div><div class="bt-suit bt-heart">♥6 4 3 2</div><div class="bt-suit bt-diamond">♦J 4</div><div class="bt-suit bt-club">♣A Q J 5 2</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 4♥S=  (620)</div>
+    </div>'><a href="board-4.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">4</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3N K</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">+1</td>
+                    <td style="color:#0f8b61; font-weight:bold;">630</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">50</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">45</td></tr><tr class="tr-link" onclick="location.href='board-13.html?pair=pair-N-S-7.html';"><td rowspan="4">6<br><span class='badge badge-ns'>KG</span></td><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A Q 9 3</div><div class="bt-suit bt-heart">♥10 9 2</div><div class="bt-suit bt-diamond">♦Q 7 3</div><div class="bt-suit bt-club">♣K J 5</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠K 7</div><div class="bt-suit bt-heart">♥A 7 5</div><div class="bt-suit bt-diamond">♦10 8 6</div><div class="bt-suit bt-club">♣A Q 9 4 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">13</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠J 10 6 4 2</div><div class="bt-suit bt-heart">♥K 8 6 3</div><div class="bt-suit bt-diamond">♦A 9 4</div><div class="bt-suit bt-club">♣7</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠8 5</div><div class="bt-suit bt-heart">♥Q J 4</div><div class="bt-suit bt-diamond">♦K J 5 2</div><div class="bt-suit bt-club">♣10 8 6 3</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 1NTS=  (90)</div>
+    </div>'><a href="board-13.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">13</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">2<span style='color:#FF0000;'>♥</span> D</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#b91c1c; font-weight:bold;">-110</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">00</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">43</td><td rowspan="4" class="opponent-cell">
+                        <div class="rakip-names" style="color:#2563eb;"><span class="rakip-player">O. GÜNEŞ</span><span class="rakip-tire">-</span><span class="rakip-player">N. KALEMCİ</span></div>
+                        <div class="rakip-score" style="color:#b91c1c;">%12</div>
+                    </td></tr><tr class="tr-link" onclick="location.href='board-14.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A 7 6 4 3</div><div class="bt-suit bt-heart">♥3</div><div class="bt-suit bt-diamond">♦Q 2</div><div class="bt-suit bt-club">♣A K Q 10 8</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠Q J 5</div><div class="bt-suit bt-heart">♥A K J 8 7 5</div><div class="bt-suit bt-diamond">♦J</div><div class="bt-suit bt-club">♣J 6 3</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">14</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠K 9 2</div><div class="bt-suit bt-heart">♥10 6</div><div class="bt-suit bt-diamond">♦A 10 9 7 6 5 4</div><div class="bt-suit bt-club">♣7</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠10 8</div><div class="bt-suit bt-heart">♥Q 9 4 2</div><div class="bt-suit bt-diamond">♦K 8 3</div><div class="bt-suit bt-club">♣9 5 4 2</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 3♠Sx-1 / 4♣Sx-1  (-100)</div>
+    </div>'><a href="board-14.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">14</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3<span style='color:#FF0000;'>♥</span>X B</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#b91c1c; font-weight:bold;">-530</td>
+                    <td style="color:#b91c1c; font-weight:bold; text-align:right;">00</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">41</td></tr><tr class="tr-link" onclick="location.href='board-15.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A Q 7 2</div><div class="bt-suit bt-heart">♥6 4</div><div class="bt-suit bt-diamond">♦A K 8 7</div><div class="bt-suit bt-club">♣A 9 5</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠6</div><div class="bt-suit bt-heart">♥K 9 8 7 2</div><div class="bt-suit bt-diamond">♦J 10 4 3</div><div class="bt-suit bt-club">♣6 4 3</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#FF0000;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); color:#ffffff;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#ffffff;">D</span><span style="font-size:18px; font-weight:bold; color:white;">15</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠K J 10 8 5</div><div class="bt-suit bt-heart">♥Q J 10</div><div class="bt-suit bt-diamond">♦9</div><div class="bt-suit bt-club">♣K 10 7 2</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠9 4 3</div><div class="bt-suit bt-heart">♥A 5 3</div><div class="bt-suit bt-diamond">♦Q 6 5 2</div><div class="bt-suit bt-club">♣Q J 8</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 2NTS=  (120)</div>
+    </div>'><a href="board-15.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">15</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">3N G</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">-1</td>
+                    <td style="color:#b91c1c; font-weight:bold;">-100</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">25</td>
+                    <td style="color:#1e40af; font-weight:bold; text-align:right;">40</td></tr><tr class="tr-link" onclick="location.href='board-16.html?pair=pair-N-S-7.html';"><td class="bord-td"><span class="tip-wrap" data-tip='<div class="board-tip">
+        <div class="bt-grid">
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠9 4 2</div><div class="bt-suit bt-heart">♥A 9 8 5 2</div><div class="bt-suit bt-diamond">♦8 4 3</div><div class="bt-suit bt-club">♣7 5</div></div></div>
+            <div class="bt-ew-row"><div class="bt-card"><div class="bt-suit bt-spade">♠8 5</div><div class="bt-suit bt-heart">♥10 6 4 3</div><div class="bt-suit bt-diamond">♦Q J 2</div><div class="bt-suit bt-club">♣10 9 8 2</div></div><div style="flex:0 0 auto; position:relative; width:64px; height:64px; margin:0 6px; background:#0b2818; border-radius:8px; display:flex; align-items:center; justify-content:center;"><span class="bt-zb" style="top:3px; left:50%; transform:translateX(-50%); color:#ffffff;">K</span><span class="bt-zb" style="bottom:3px; left:50%; transform:translateX(-50%); color:#ffffff;">G</span><span class="bt-zb" style="left:5px; top:50%; transform:translateY(-50%); border:1.5px solid #ffffff; border-radius:50%; width:16px; height:16px; text-align:center; line-height:15px; color:#FF0000;">B</span><span class="bt-zb" style="right:5px; top:50%; transform:translateY(-50%); color:#FF0000;">D</span><span style="font-size:18px; font-weight:bold; color:white;">16</span></div><div class="bt-card"><div class="bt-suit bt-spade">♠K J 7 6 3</div><div class="bt-suit bt-heart">♥K</div><div class="bt-suit bt-diamond">♦A K 7</div><div class="bt-suit bt-club">♣A 6 4 3</div></div></div>
+            <div class="bt-ns-row"><div class="bt-card"><div class="bt-suit bt-spade">♠A Q 10</div><div class="bt-suit bt-heart">♥Q J 7</div><div class="bt-suit bt-diamond">♦10 9 6 5</div><div class="bt-suit bt-club">♣K Q J</div></div></div>
+        </div>
+        <div class="board-tip-optimum">Optimum: [v4] K-G: 1NTS+1  (120)</div>
+    </div>'><a href="board-16.html?pair=pair-N-S-7.html" style="color:#b91c1c; text-decoration:none; font-weight:bold;">16</a></span></td><td class="kontrat-td" style="text-align:left; width:9ch; white-space:normal;">2<span style='color:#FF0000;'>♥</span> K</td>
+                    <td class="atak-td">-</td>
+                    <td style="font-weight:bold; width:34px;">=</td>
+                    <td style="color:#0f8b61; font-weight:bold;">110</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">25</td>
+                    <td style="color:#c2410c; font-weight:bold; text-align:right;">40</td></tr></tbody></table></div>
+    <script>
+    function siralaGoster(mod) {
+        document.getElementById('view-board').style.display = (mod === 'board') ? 'block' : 'none';
+        document.getElementById('view-round').style.display = (mod === 'round') ? 'block' : 'none';
+        document.getElementById('btn-sort-board').style.display = (mod === 'board') ? 'none' : '';
+        document.getElementById('btn-sort-round').style.display = (mod === 'round') ? 'none' : '';
+    }
+    </script>
+    <div class="site-footer" style="text-align:center; margin-top:25px; padding:14px;
+    background:linear-gradient(135deg, #1e293b, #0f172a); color:rgba(255,255,255,0.85);
+    font-size:12px; border-radius:8px;">© 2026 Sekans Bri̇ç Spor Kulübü | Tüm Hakları Saklıdır</div>
+    <div id="global-tooltip"></div>
+<script>
+(function(){
+    var tip = document.getElementById('global-tooltip');
+    if (!tip) return;
+    function konumla(el){
+        tip.style.left = '0px'; tip.style.top = '0px'; tip.style.display = 'block';
+        var r = el.getBoundingClientRect();
+        var tr = tip.getBoundingClientRect();
+        var left = r.left + r.width/2 - tr.width/2;
+        var top = r.bottom + 6;
+        if (top + tr.height > window.innerHeight) top = r.top - tr.height - 6;
+        if (top < 4) top = 4;
+        if (top + tr.height > window.innerHeight - 4) top = Math.max(4, window.innerHeight - tr.height - 4);
+        if (left < 4) left = 4;
+        if (left + tr.width > window.innerWidth - 4) left = window.innerWidth - tr.width - 4;
+        tip.style.left = left + 'px';
+        tip.style.top = top + 'px';
+    }
+    function bagla(el){
+        el.addEventListener('mouseenter', function(){
+            if (window.innerWidth <= 768) return;
+            var t = el.getAttribute('data-tip');
+            if (!t) return;
+            tip.innerHTML = t;
+            konumla(el);
+        });
+        el.addEventListener('mouseleave', function(){ tip.style.display = 'none'; });
+    }
+    document.querySelectorAll('.tip-wrap[data-tip]').forEach(bagla);
+    window._baglaTip = bagla;
+})();
+</script>
+    </body></html>

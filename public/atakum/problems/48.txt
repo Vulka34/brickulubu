@@ -1,0 +1,7 @@
+imp: 4♠, Atak ♥10
+zon: 
+kuzey: 2 / AR3 / V95 / AR7642
+guney: ADV986 / 752 / AT7 / 3
+ihale1: 
+ihale2: 
+not: Kontrat 4♠, Atak ♥10. Nasıl oynarsınız?

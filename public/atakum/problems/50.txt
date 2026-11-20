@@ -1,0 +1,9 @@
+imp: 6♠, Atak ♥D
+zon: 
+kuzey: VT432 / 32 / RT4 / 543
+guney: ARD65 / AR / A32 / AR2
+ihale1:3♥, Pas, Pas, Kontr 
+ihale2:Pas, 3♠, Pas, 4♥
+ihale3:Pas, 4♠, Pas, 5♣
+ihale3:Pas, 5♦, Pas, 6♠ 
+yorum: Aldınız ve ♠Ası çektiniz, Doğu ♦7'li attı. Nasıl devam edersiniz.?

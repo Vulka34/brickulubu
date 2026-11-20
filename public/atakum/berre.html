@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volkanik Briç Kulübü | Eğitim Paneli</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 15px; }
+        h1 { text-align: center; color: #38bdf8; margin: 15px 0 5px 0; font-size: 24px; }
+        .subtitle { text-align: center; color: #94a3b8; margin-bottom: 25px; font-size: 14px; }
+        
+        /* Ana Liste Konteyneri (Masaüstünde ekranı ortalar ve sağ-sol boşlukları korur) */
+        .board-list { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
+        
+        /* Toggle Butonları */
+        .board-row { background: #1e293b; border-radius: 8px; overflow: hidden; border: 1px solid #334155; }
+        .board-header { padding: 15px 20px; background: #334155; cursor: pointer; font-weight: bold; font-size: 16px; display: flex; justify-content: space-between; transition: 0.3s; }
+        .board-header:hover { background: #475569; color: #38bdf8; }
+        
+        /* 📱 MOBİL ÖNCELİKLİ (VARSAYILAN) AYARLAR: İki hücre mobilde alt alta durur */
+        .board-content { display: none; padding: 15px; background: #1e293b; flex-direction: column; gap: 20px; box-sizing: border-box; }
+        
+        /* 🛠️ SOL HÜCRE (Kapsayıcı ve Iframe) */
+        /* BSOL'ün kendi arayüzü küçük çerçevelerde iç kaydırma çubuklarıyla kesiliyor,
+           bu yüzden "gerçek" (native) genişliğini geniş tuttuk (950px). Ölçekleme,
+           bazı tarayıcılarda (özellikle mobil Safari) CSS calc()'in transform:scale()
+           içinde güvenilir çalışmaması nedeniyle artık JavaScript ile (aşağıdaki
+           updateBsolScale fonksiyonu) hesaplanıp uygulanıyor.
+           GÖRÜNEN PENCERE (bu kutu) ise BSOL'ün asıl içeriğinden (950x620) daha KISA
+           (460px) VE biraz DAR (925px, soldaki boş kenarlığı kırpmak için) tutulup,
+           fazlalık overflow:hidden ile kırpılıyor — iframe'in kendi boyutu (950x620)
+           hâlâ tam, sadece göründüğü pencere daha küçük. */
+        .left-cell {
+            width: 100%;
+            max-width: 925px;                       /* Mobilde ekran dışına taşmasını engeller */
+            height: calc(100vw * 460 / 950);         /* Kırpılmış (kısa) oranı koruyarak akıcı yükseklik */
+            max-height: 460px;
+            overflow: hidden;
+            border: 2px solid #475569;
+            border-radius: 6px;
+            background: white;
+            position: relative;
+            margin: 0 auto;                          /* Mobilde ortalansın */
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+
+        /* Native boyutunda iframe (950x620 tam). Ölçek artık CSS calc() ile değil,
+           aşağıdaki JS ile (her tarayıcıda güvenilir çalışsın diye) hesaplanıp
+           doğrudan satır-içi (inline) style olarak uygulanıyor. */
+        .bsol-frame {
+            width: 950px;
+            height: 620px;
+            border: none;
+            overflow: hidden;
+            transform: scale(1);
+            transform-origin: top left;
+            position: absolute;
+            top: 0;
+            left: -25px;
+        }
+        
+        /* 📋 SAĞ HÜCRE (Öğretmen Açıklama Hücresi) */
+        .right-cell { 
+            width: 100%;
+            background: #0f172a;    
+            padding: 20px; 
+            border-radius: 6px; 
+            border-left: 5px solid #0ea5e9; 
+            box-sizing: border-box; 
+        }
+        .right-cell h3 { margin-top: 0; color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 8px; font-size: 18px; }
+        .right-cell p { line-height: 1.6; color: #cbd5e1; white-space: pre-line; font-size: 15px; margin-bottom: 0; }
+
+        /* 💻 BİLGİSAYAR / MASAÜSTÜ MODU (Ekran genişliği 850px'den büyükse devreye girer) */
+        @media (min-width: 850px) {
+            .board-content { 
+                flex-direction: row; /* 🚀 Yan yana iki hücreli flex-box moduna geçer */
+                height: 460px;       /* Kırpılmış pencere yüksekliğine tam oturur */
+                padding: 20px;
+            }
+            
+            /* Sol Hücre Masaüstünde Kırpılmış Yüksekliğinde (460px) ve Dar (925px) */
+            .left-cell { 
+                width: 925px; 
+                max-width: none;
+                height: 460px;
+                max-height: none;
+                margin: 0; 
+            }
+            
+            /* Masaüstünde ölçekleme kaldırıldı — DDS tam ve kesintisiz native genişlikte,
+               altındaki fazlalık overflow:hidden ile kırpılıyor */
+            .bsol-frame { 
+                transform: scale(1);
+            }
+            
+            /* Sağ Hücre Kalan Tüm Boş Alanı Kaplar ve Uzun Metinlerde Aşağı Kayar */
+            .right-cell { 
+                flex: 1; 
+                width: auto;
+                min-width: 300px;    /* Metnin tek sütun halinde ezilmesini engeller */
+                height: 100%; 
+                overflow-y: auto; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>♠ Volkanik Briç Kulübü Eğitim Paneli</h1>
+    <p class="subtitle">Analiz etmek istediğiniz bordun üzerine tıklayın. (Bord 1 - 10)</p>
+
+    <div class="board-list">
+        
+        <!-- BORD 1 -->
+        <div class="board-row">
+            <div class="board-header" onclick="toggleBoard('board-1')">
+                <span>🃏 Bord 2</span><span>▼ Aç / Kapat</span>
+            </div>
+            <div id="board-1" class="board-content">
+                <div class="left-cell">
+                    <iframe class="bsol-frame" src="https://dds.bridgewebs.com/bsol2/ddummy.htm?club=chrome_ext&file=https://dds.bridgewebs.com/bridgesolver/uploads/6aa657ce784826.06025332.pbn" scrolling="no" loading="lazy"></iframe>
+                </div>
+                <div class="right-cell">
+                    <h3>📋 Öğretmen Analizi</h3>
+                    <p>Deklerasyon senin sağından başladı: P-1H-P-1NT; P-2D-P-2H. Benim tutuşum varsa puanım 5-7, 2li ise 9'a kadar çıkabilir, hiç bir durumda zona gidecek elimiz yok. Burada biz 3H'ü blokatif amaçlı söylüyoruz ma o d9 kozumuz olduğunu bildiğimizde. Yani 1H-2H;3H: Bu biledavet değil, davet edeceksek trial-bid yapıyoruz.
+Oyun:Pik atağı geldi, yerden Dam ile kazandın, ben olsam hemen kör empası yapardım. Sen ele göre doğru tercih ettin, karo Ruayı uçurdun, sol almayınca Asın sağ tarafta olduğu belli oldu. Tekrar karo oynayıp Damı koydun, küçük koymak iyiydi. Gerçi biraz yerdeyken elden oynadın, ondan dolayı oldu :)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- BORD 2 -->
+        <div class="board-row">
+            <div class="board-header" onclick="toggleBoard('board-2')">
+                <span>🃏 Bord 12</span><span>▼ Aç / Kapat</span>
+            </div>
+            <div id="board-2" class="board-content">
+                <div class="left-cell">
+                    <iframe class="bsol-frame" src="https://dds.bridgewebs.com/bsol2/ddummy.htm?club=chrome_ext&file=https://dds.bridgewebs.com/bridgesolver/uploads/6aa65945607a27.79047622.pbn" scrolling="no" loading="lazy"></iframe>
+                </div>
+                <div class="right-cell">
+                    <h3>📋 Öğretmen Analizi</h3>
+                    <p>Burada solun 2♦ multi açtıktan sonra 6♠’e geldik. Belki batabilir belki yapılabilir ama ♥A, kör oynadın, yerden 2li çaktın, üste çakıldı. Deklerasyonu orsan sol tarafın 6tane körü olduğu belli idi, belki 9lu çakardın veya başka şekilde oynardın. Bir de bir ara elden ♣V, empasın tutmasına rağmen karı olmadı  Bu oyunun da kazama şas var ama D ikiliye göre daha az. Batılabilir ama biraz daha dikkatli oynamak lazım.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- BORD 3'TEN 10'A KADAR AYNI MANTIKTA ÇOĞALTILMIŞTIR -->
+        <!-- (Kolaylık olması için alt alta 10 bordun iskeletini de ekledim, sadece src ve açıklamaları doldurabilirsiniz) -->
+        <div class="board-row"><div class="board-header" onclick="toggleBoard('board-3')"><span>🃏 Bord 12</span><span>▼</span></div><div id="board-3" class="board-content"><div class="left-cell"><iframe class="bsol-frame" src="https://dds.bridgewebs.com/bsol2/ddummy.htm?club=chrome_ext&file=https://dds.bridgewebs.com/bridgesolver/uploads/6aa65970e48433.07006531.pbn"></iframe></div><div class="right-cell"><h3>📋 Analiz</h3><p>                    <p>Sağın 1♣ açtı, sen 1♥, sol x, ben 2♥ dedim, aslında xx atmalıydım. Rakip 2♠’e geldi, ♦6lı çıktın, sanırım, günahını almayayım 4lü olmasın. Onör olmayınca ortadan mı açılıyorsunuz? Tabii ben de Rua olmayabilir ama genellikle rengimizse As yanından çıkılabilir. Neyse karo çıktın, deklaran kozları çekerken ben piklere 10lu, 8li, 5li verdim, köre preferans yapmak için. Deklaran elden DVye doğru trefli oynadı hemen Ası girdin, kaçacak bir şey yoktu, Rua ondaysa atacak bir yeri yok sonra alırdın, bendeyse bırak ben alayım, belki kör Damım var, adamın Ruasına yaptırmayacağız.</p></div></div></div>
+        <div class="board-row"><div class="board-header" onclick="toggleBoard('board-4')"><span>🃏 Bord 9</span><span>▼</span></div><div id="board-4" class="board-content"><div class="left-cell"><iframe class="bsol-frame" src="https://dds.bridgewebs.com/bsol2/ddummy.htm?club=chrome_ext&file=https://dds.bridgewebs.com/bridgesolver/uploads/6aa659e314c583.71208379.pbn"></iframe></div><div class="right-cell"><h3>📋 Analiz</h3><p>Enteresan, salondan dolayı kaybetmişiz. Rakip 3nt oynuyor, sen pikV atak ettin, yerden aldı karo çevirdi, benim hemen Ryı girip kör oynamam gerekiyormuş. Masada uyanık olmak lazım ama bilemedim. .diğer masalarda nasıl oldu acaba?</p></div></div></div>
+        <div class="board-row"><div class="board-header" onclick="toggleBoard('board-5')"><span>🃏 Bord 13</span><span>▼</span></div><div id="board-5" class="board-content"><div class="left-cell"><iframe class="bsol-frame" src="https://dds.bridgewebs.com/bsol2/ddummy.htm?club=chrome_ext&file=https://dds.bridgewebs.com/bridgesolver/uploads/6aa65a290535b6.77064374.pbn"></iframe></div><div class="right-cell"><h3>📋 Analiz</h3><p>1♣ -1♠ -x-p
+2♣ -2♠ -3♥ =8-10, 5-6 kör, bırakabilsen iyiymiş. Ya da baştan 2 desen ben 2NT desem…
+ </p></div></div></div>
+        <div class="board-row"><div class="board-header" onclick="toggleBoard('board-6')"><span>🃏 Bord 0</span><span>▼</span></div><div id="board-6" class="board-content"><div class="left-cell"><iframe class="bsol-frame" src="  "></iframe></div><div class="right-cell"><h3>📋 Analiz</h3><p></p></div></div></div>
+        <div class="board-row"><div class="board-header" onclick="toggleBoard('board-7')"><span>🃏 Bord 0</span><span>▼</span></div><div id="board-7" class="board-content"><div class="left-cell"><iframe class="bsol-frame" src="https://dds.bridgewebs.com/bsol2/ddummy.htm?club=chrome_ext&file=https://dds.bridgewebs.com/bridgesolver/uploads/6aa5deb95aff94.59835687.pbn"></iframe></div><div class="right-cell"><h3>📋 Analiz</h3><p></p></div></div></div>
+        <div class="board-row"><div class="board-header" onclick="toggleBoard('board-8')"><span>🃏 Bord 0</span><span>▼</span></div><div id="board-8" class="board-content"><div class="left-cell"><iframe class="bsol-frame" src="https://dds.bridgewebs.com/bsol2/ddummy.htm?club=chrome_ext&file=https://dds.bridgewebs.com/bridgesolver/uploads/6aa5e0c05ba828.14665307.pbn"></iframe></div><div class="right-cell"><h3>📋 Analiz</h3><p></p></div></div></div>
+        <div class="board-row"><div class="board-header" onclick="toggleBoard('board-9')"><span>🃏 Bord 90</span><span>▼</span></div><div id="board-9" class="board-content"><div class="left-cell"><iframe class="bsol-frame" src="about:blank"></iframe></div><div class="right-cell"><h3>📋 Analiz</h3><p>Bord 9 açıklaması...</p></div></div></div>
+        <div class="board-row"><div class="board-header" onclick="toggleBoard('board-10')"><span>🃏 Bord 0</span><span>▼</span></div><div id="board-10" class="board-content"><div class="left-cell"><iframe class="bsol-frame" src="about:blank"></iframe></div><div class="right-cell"><h3>📋 Analiz</h3><p>Bord 10 açıklaması...</p></div></div></div>
+
+    </div>
+
+    <!-- Kesin Çalışan Saf JavaScript Akordeon Mantığı -->
+    <script>
+        function updateBsolScale(container) {
+            var frames = container.querySelectorAll('.bsol-frame');
+            for (var i = 0; i < frames.length; i++) {
+                var frame = frames[i];
+                var cell = frame.parentElement;
+                var w = cell.clientWidth;
+                if (w > 0) {
+                    var scale = w / 950;
+                    frame.style.transform = 'scale(' + scale + ')';
+                }
+            }
+        }
+
+        function toggleBoard(boardId) {
+            var content = document.getElementById(boardId);
+            
+            // Eğer tıklanan bord zaten açıksa, onu kapat
+            if (content.style.display === "flex") {
+                content.style.display = "none";
+            } else {
+                // Önce açık olan diğer tüm bordları gizle
+                var allContents = document.getElementsByClassName('board-content');
+                for (var i = 0; i < allContents.length; i++) {
+                    allContents[i].style.display = "none";
+                }
+                // Seçilen bordu flex düzeninde görünür yap
+                content.style.display = "flex";
+                // Kutu artık görünür olduğu için gerçek genişliğini ölçüp ölçeği hesapla
+                updateBsolScale(content);
+            }
+        }
+
+        // Ekran döndürüldüğünde veya pencere yeniden boyutlandırıldığında,
+        // o an açık olan bordun ölçeğini yeniden hesapla
+        window.addEventListener('resize', function() {
+            var acikOlan = document.querySelector('.board-content[style*="flex"]');
+            if (acikOlan) updateBsolScale(acikOlan);
+        });
+    </script>
+</body>
+</html>

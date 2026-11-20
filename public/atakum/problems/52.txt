@@ -1,0 +1,8 @@
+imp: 3NT, Atak ♠3
+zon: 
+kuzey: V7 / A954 / 93 / ART65
+guney: D96 / R73 / ARD5 / 872
+ihale1: 
+ihale2: 
+yorum: 3NT, Atak ♠3
+7li, 10lu, Dam ile aldınız. Nasıl devam edersiniz.?

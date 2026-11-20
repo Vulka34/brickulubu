@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atakum Briç Spor Kulübü</title>
+<link rel="stylesheet" href="style.css?v=4">
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="brand">
+    <span class="brand-mark">
+      <span class="card-fan small">
+        <span class="card c1"><span class="rank">10</span><span class="suit">♠</span></span>
+        <span class="card c2"><span class="rank">J</span><span class="suit">♠</span></span>
+        <span class="card c3"><span class="rank">Q</span><span class="suit">♠</span></span>
+        <span class="card c4"><span class="rank">K</span><span class="suit">♠</span></span>
+        <span class="card c5"><span class="rank">A</span><span class="suit">♠</span></span>
+      </span>
+    </span>
+    <span class="brand-name">Atakum Briç Spor Kulübü</span>
+  </a>
+  <div class="navlinks">
+    <a href="index.html" class="active">Ana Sayfa</a>
+    <a href="kulubumuz.html">Kulübümüz</a>
+    <a href="takvim.html">Turnuva Sonuçları</a>
+  </div>
+</nav>
+
+<div class="wrap hero hero-tight">
+  <div class="hero-columns">
+    <div class="hero-announcements">
+      <img src="duyurular/aksam-simultane.jpg" alt="TBF Akşam Simultane - Salı 19:00">
+      <img src="duyurular/pazar-simultane.jpg" alt="TBF Pazar Simultane - Pazar 14:00">
+    </div>
+    <div class="hero-main">
+      <div class="problem-card" id="problemCard">
+        <div class="problem-state-msg">Yükleniyor...</div>
+      </div>
+
+      <div class="btn-row">
+        <a href="kulubumuz.html" class="btn btn-solid">Kulübümüzü Tanıyın</a>
+        <a href="takvim.html" class="btn btn-outline">Turnuva Sonuçlarını Görün</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="section-alt">
+  <div class="wrap">
+    <h2 style="font-size:26px;">Kulüpte neler var?</h2>
+    <div class="tiles">
+      <a href="kulubumuz.html" class="tile">
+        <h3>Kulübümüz</h3>
+        <p>Kulübün hikayesi, ortamı ve kulüpten kareler.</p>
+        <span class="go">Sayfaya git</span>
+      </a>
+      <a href="takvim.html" class="tile">
+        <h3>Turnuva Sonuçları</h3>
+        <p>Geçmiş ve güncel turnuvaları takvimden takip edin.</p>
+        <span class="go">Sayfaya git</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>Atakum Briç Spor Kulübü</footer>
+
+<script>
+const SUIT = { S: { sym: '&#9824;', cls: 'chip-s' }, H: { sym: '&#9829;', cls: 'chip-h' },
+               D: { sym: '&#9830;', cls: 'chip-d' }, C: { sym: '&#9827;', cls: 'chip-c' } };
+const SUIT_ORDER = ['S', 'H', 'D', 'C'];
+
+function isoWeekNumber(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const week = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  return Math.min(week, 52); // 53. hafta cikarsa 52'ye sabitle (dongu 1-52 arasi)
+}
+
+function parseProblemFile(text) {
+  const data = {};
+  text.split('\n').forEach(line => {
+    const idx = line.indexOf(':');
+    if (idx === -1) return;
+    const key = line.slice(0, idx).trim().toLowerCase();
+    const val = line.slice(idx + 1).trim();
+    if (!key || !val) return;
+    if (key === 'kuzey' || key === 'guney') {
+      data[key] = val.split('/').map(s => s.trim());
+    } else if (key.startsWith('ihale')) {
+      data.ihale = data.ihale || [];
+      data.ihale.push(val.split(',').map(s => s.trim()));
+    } else {
+      data[key] = val;
+    }
+  });
+  return data;
+}
+
+function handHTML(cells) {
+  if (!cells) return '';
+  return '<div class="hand">' + SUIT_ORDER.map((s, i) => `
+    <div class="hand-line"><span class="hand-chip ${SUIT[s].cls}"><span>${SUIT[s].sym}</span><span>${cells[i] || '-'}</span></span></div>
+  `).join('') + '</div>';
+}
+
+function colorizeBid(bid) {
+  return bid.replace(/[♠♥♦♣]/g, (sym) => {
+    const cls = { '♠': 'bid-s', '♥': 'bid-h', '♦': 'bid-d', '♣': 'bid-c' }[sym];
+    return `<span class="${cls}">${sym}</span>`;
+  });
+}
+
+function numberStars(text, counterRef) {
+  return (text || '').replace(/\*/g, () => `<sup>${counterRef.n++}</sup>`);
+}
+
+function auctionHTML(rows, counterRef) {
+  if (!rows || !rows.length) return '';
+  const body = rows.map(cells => {
+    const n = cells.length;
+    return '<tr>' + cells.map((c, i) => {
+      const isLast = i === n - 1;
+      const span = isLast && n < 4 ? (4 - n + 1) : 1;
+      const withStars = numberStars(c, counterRef);
+      return `<td${span > 1 ? ` colspan="${span}"` : ''}>${colorizeBid(withStars)}</td>`;
+    }).join('') + '</tr>';
+  }).join('');
+  return `
+    <table class="auction">
+      <tr><th>Batı</th><th>Kuzey</th><th>Doğu</th><th>Güney</th></tr>
+      ${body}
+    </table>
+  `;
+}
+
+function renderProblem(data) {
+  // Numaralama sirasi: once artirma hucrelerindeki yildizlar (okundugu sirayla),
+  // sonra not, sonra yorum - hepsi AYNI sayaci paylasir ki artirmadaki '*' ile
+  // altindaki aciklama numarasi eslessin.
+  const counter = { n: 1 };
+  const auctionTableHtml = auctionHTML(data.ihale, counter);
+  const notHtml = colorizeBid(numberStars(data.not, counter));
+  const yorumHtml = colorizeBid(numberStars(data.yorum, counter));
+
+  document.getElementById('problemCard').innerHTML = `
+    <div class="problem-head">
+      <div class="problem-meta">${data.imp || ''}${data.zon ? ' &middot; ' + data.zon : ''}</div>
+      <h2 class="problem-title">Haftanın Problemi</h2>
+    </div>
+    <div class="problem-body">
+      <div class="hand-area">
+        <div>${handHTML(data.kuzey)}</div>
+        <div class="compass"><span class="n">K</span><span class="w">B</span><span>D</span><span class="s">G</span></div>
+        <div>${handHTML(data.guney)}</div>
+      </div>
+      <div class="auction-section">
+        <div class="auction-label">Artırma</div>
+        ${auctionTableHtml}
+        ${notHtml ? `<div class="problem-footnote">${notHtml}</div>` : ''}
+        ${yorumHtml ? `<div class="commentary">${yorumHtml}</div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function renderMessage(text) {
+  document.getElementById('problemCard').innerHTML = `<div class="problem-state-msg">${text}</div>`;
+}
+
+async function loadThisWeek() {
+  const week = isoWeekNumber(new Date());
+  try {
+    const res = await fetch(`problems/${week}.txt`);
+    if (!res.ok) throw new Error('yok');
+    const text = await res.text();
+    renderProblem(parseProblemFile(text));
+  } catch (e) {
+    renderMessage(`Bu haftanın problemi (${week}. hafta) henüz eklenmedi. Yakında burada olacak!`);
+  }
+}
+
+loadThisWeek();
+</script>
+
+</body>
+</html>
