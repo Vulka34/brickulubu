@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071d3a">
+  <title>Eldeki Kartlar, Masadaki Tatlar | KUP Briç</title>
+  <style>
+    :root {
+      --navy: #071d3a;
+      --navy2: #102d50;
+      --gold: #d7ad55;
+      --cream: #f7f0df;
+      --red: #a9262d;
+      --green: #164d3d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--navy);
+      font-family: Georgia, "Times New Roman", serif;
+      background-color: #eee5d2;
+      background-image:
+        radial-gradient(ellipse at 20% 20%, rgba(255,255,255,.75), transparent 42%),
+        repeating-linear-gradient(135deg, rgba(255,255,255,.10) 0 1px, rgba(7,29,58,.025) 1px 3px),
+        linear-gradient(145deg, #f8f2e5, #e9dfca);
+      position: relative;
+      overflow-x: hidden;
+    }
+    /* Kabartma etkili, çok silik briç sembolleri */
+    body::before {
+      content: "♠   ♥   ♦   ♣      ♣   ♦   ♥   ♠";
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4vw;
+      color: rgba(7,29,58,.055);
+      font-family: Georgia, serif;
+      font-size: clamp(42px, 9vw, 110px);
+      letter-spacing: .18em;
+      line-height: 2.2;
+      text-align: center;
+      text-shadow: 1px 1px 0 rgba(255,255,255,.8), -1px -1px 0 rgba(7,29,58,.06);
+      pointer-events: none;
+      z-index: 0;
+      overflow-wrap: anywhere;
+    }
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(100% - 28px, 760px);
+      margin: 28px auto;
+      padding: clamp(12px, 2.8vw, 24px);
+      border: 1px solid rgba(171,132,57,.55);
+      border-radius: 20px;
+      background: rgba(255,250,239,.78);
+      box-shadow: 0 18px 50px rgba(7,29,58,.16), inset 0 1px 0 #fff;
+      backdrop-filter: blur(3px);
+    }
+    .poster {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: 0 auto;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(7,29,58,.18);
+    }
+    .actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin: 22px auto 8px;
+    }
+    .action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex: 1 1 0;
+      min-height: 58px;
+      padding: 13px 20px;
+      border: 2px solid var(--gold);
+      border-radius: 12px;
+      color: #fff;
+      text-decoration: none;
+      font: 700 18px/1.2 Arial, sans-serif;
+      letter-spacing: .02em;
+      box-shadow: 0 5px 0 rgba(7,29,58,.18), inset 0 1px 0 rgba(255,255,255,.2);
+      transition: transform .15s ease, filter .15s ease;
+    }
+    .action:hover { transform: translateY(-2px); filter: brightness(1.08); }
+    .action:focus-visible { outline: 3px solid #111; outline-offset: 4px; }
+    .register { background: linear-gradient(145deg, #173b67, var(--navy)); }
+    .attendees { background: linear-gradient(145deg, #1c654e, var(--green)); }
+    .action .symbol { font-size: 22px; }
+    .foot {
+      margin: 16px 0 2px;
+      text-align: center;
+      color: #665638;
+      font: 13px/1.4 Arial, sans-serif;
+    }
+    @media (max-width: 520px) {
+      .page { width: min(100% - 16px, 760px); margin: 8px auto; padding: 8px; border-radius: 14px; }
+      .poster { border-radius: 7px; }
+      .actions { gap: 9px; margin-top: 13px; }
+      .action { min-height: 52px; padding: 11px 8px; font-size: 15px; gap: 6px; border-radius: 9px; }
+      .action .symbol { font-size: 18px; }
+      .foot { font-size: 11px; margin-top: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <img class="poster"
+         src="images/eldeki-kartlar-afis.png"
+         alt="Eldeki Kartlar, Masadaki Tatlar. Ödüllü-İkramlı Briç Günü. 1 Aralık 2026 Salı, 14:30. Katılım 500 TL.">
+
+    <nav class="actions" aria-label="Turnuva işlemleri">
+      <a class="action register"
+         href="https://www.bricskor.com/kupbricsporkulu/kayit.php?turnuva=20261125_e4264e7f">
+        <span class="symbol" aria-hidden="true">♠</span>
+        Kayıt
+      </a>
+      <a class="action attendees"
+         href="https://www.bricskor.com/kupbricsporkulu/kaydolanlar.php?turnuva=20261125_e4264e7f">
+        <span class="symbol" aria-hidden="true">♣</span>
+        Kaydolanlar
+      </a>
+    </nav>
+    <p class="foot">KUP Briç Spor Kulübü</p>
+  </main>
+</body>
+</html>
